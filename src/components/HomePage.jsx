@@ -12,7 +12,7 @@ function HomePage() {
 
       <div className="flex space-x-4">
         <Link
-          to="/login" // Navigate to the Login Page
+          to="/register" // Navigate to the Login Page
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-center"
         >
           Register
