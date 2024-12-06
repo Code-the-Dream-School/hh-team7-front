@@ -3,7 +3,7 @@ import { getAllData } from "./util/index";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./components/HomePage"; // HomePage component
 import LoginPage from "./components/LoginPage"; // LoginPage component
-
+import RegisterPage from "./components/RegisterPage";
 const URL = "http://localhost:8000/api/v1/";
 
 function App() {
@@ -27,6 +27,7 @@ function App() {
           {/* <h1>{message}</h1> */}
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
         </Routes>
       </div>
     </Router>
