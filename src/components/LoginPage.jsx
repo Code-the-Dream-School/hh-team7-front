@@ -7,20 +7,19 @@ const LoginPage = () => {
   return (
     <div className="flex min-h-screen">
       {/* Left Side */}
-      <div className="w-1/2 bg-blue-600 flex items-center justify-center">
+      <div className="w-1/2 bg-blue-500 flex items-center justify-center">
         <div className="text-white text-center">
-          <div className="rounded-full w-20 h-20 bg-blue-500 mb-6"></div>
+          <div className="rounded-full w-20 h-20 bg-blue-400 mb-6"></div>
           <h1 className="text-3xl font-bold">Welcome</h1>
           <p>Join us to create your Event!</p>
         </div>
       </div>
 
-      <div className="w-1/2 flex items-center justify-center bg-gray-100">
+      <div className="w-1/2 flex items-center justify-center bg-sky-100">
         <div className="bg-white rounded-lg shadow-lg p-8 w-96">
           <h2 className="text-2xl font-semibold text-gray-700 mb-6">
             Welcome Back
           </h2>
-          <p className="text-sm text-gray-500 mb-4">Please register here!</p>
 
           <form>
             <div className="mb-4">
@@ -70,7 +69,7 @@ const LoginPage = () => {
 
           <p className="text-sm text-center text-gray-500 mt-4">
             Don’t have an account yet?{" "}
-            <a href="#" className="text-blue-500 hover:underline">
+            <a href="/register" className="text-blue-500 hover:underline">
               Sign up
             </a>
           </p>
