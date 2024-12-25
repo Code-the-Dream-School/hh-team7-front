@@ -1,5 +1,4 @@
 import React from "react";
-import { CiViewTimeline } from "react-icons/ci";
 
 function HomePage() {
   const backgroundImage =
@@ -15,9 +14,7 @@ function HomePage() {
         height: "100vh",
       }}
       className="relative"
-    >
-
-    </div>
+    ></div>
   );
 }
 
