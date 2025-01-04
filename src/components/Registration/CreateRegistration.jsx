@@ -9,6 +9,7 @@ const CreateRegistration = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [username, setUsername] = useState("");
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -31,7 +32,8 @@ const CreateRegistration = () => {
         registrationData,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Pass token for authentication
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         }
       );
@@ -65,6 +67,23 @@ const CreateRegistration = () => {
         onSubmit={handleSubmit}
         className="max-w-lg mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
       >
+        <div className="mb-4">
+          <label
+            htmlFor="username"
+            className="block text-gray-700 text-sm font-bold mb-2"
+          >
+            User Name
+          </label>
+          <input
+            type="text"
+            id="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            placeholder="Enter your name"
+          />
+        </div>
         <div className="mb-4">
           <label
             htmlFor="eventid"

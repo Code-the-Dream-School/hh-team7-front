@@ -8,6 +8,13 @@ export const UserAuthProvider = ({ children }) => {
 
   const API_URL = "http://localhost:8000/api/v1";
 
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, []);
+
   // Create a new registration
   const createRegistration = async (registrationData) => {
     if (!token) {
@@ -23,7 +30,6 @@ export const UserAuthProvider = ({ children }) => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-
         }
       );
       return response.data;

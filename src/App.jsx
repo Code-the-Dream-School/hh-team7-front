@@ -20,6 +20,7 @@ import ManageEvents from "./components/event/ManageEvents";
 import UpdateEvent from "./components/event/UpdateEvent";
 import CreateEvent from "./components/event/CreateEvent";
 import CreateRegistration from "./components/Registration/CreateRegistration";
+import ManageRegistration from "./components/Registration/manageRegistration";
 
 const App = () => {
   const location = useLocation(); // Get the current location (path)
@@ -48,6 +49,10 @@ const App = () => {
                 <Route path="/create-event" element={<CreateEvent />} />
                 <Route path="/update-event/:id" element={<UpdateEvent />} />
                 <Route path="/registrations" element={<CreateRegistration />} />
+                <Route
+                  path="manage-register"
+                  element={<ManageRegistration />}
+                />
               </Routes>
             </div>
           </div>
