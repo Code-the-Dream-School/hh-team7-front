@@ -2,8 +2,8 @@ import React, { useContext, useState } from "react";
 import { UserAuthContext } from "../../contexts/UserAuthContext";
 import axios from "axios";
 
-const CreateRegistration = () => {
-  const { token, createRegistration } = useContext(UserAuthContext); // Access token and context function
+const CreateRegistration = ({ onRegistrationCreated }) => {
+  const { token } = useContext(UserAuthContext); // Access token and context function
   const [eventid, setEventid] = useState(""); // State for event ID
   const [status, setStatus] = useState("Confirmed"); // Default status
   const [loading, setLoading] = useState(false);
@@ -40,8 +40,10 @@ const CreateRegistration = () => {
 
       // Handle success
       console.log("Response:", response.data);
+      onRegistrationCreated(response.data);
       setSuccess("Registration created successfully!");
       setEventid("");
+      setUsername("");
     } catch (err) {
       // Handle error
       console.error("Error creating registration:", err);

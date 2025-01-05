@@ -74,22 +74,14 @@ export function DefaultSidebar() {
               Manage Users
             </Link>
           </ListItem>
-          {/* Add the Registrations Link */}
-          <ListItem>
-            <ListItemPrefix>
-              <ShoppingBagIcon className="h-5 w-5" />
-            </ListItemPrefix>
-            <Link to="/registrations" className="text-blue-500">
-              Registrations
-            </Link>
-          </ListItem>
+
           {/* managing registration */}
           <ListItem>
             <ListItemPrefix>
               <ShoppingBagIcon className="h-5 w-5" />
             </ListItemPrefix>
             <Link to="/manage-register" className="text-blue-500">
-              ManageRegistrations
+              Registrations
             </Link>
           </ListItem>
         </List>
