@@ -4,7 +4,7 @@ import axios from "axios";
 
 const CreateRegistration = () => {
   const { token, createRegistration } = useContext(UserAuthContext); // Access token and context function
-  const [eventid, setEventid] = useState(""); // State for event ID
+  const [eventId, setEventId] = useState(""); // State for event ID
   const [status, setStatus] = useState("Confirmed"); // Default status
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -20,7 +20,7 @@ const CreateRegistration = () => {
 
     try {
       const registrationData = {
-        eventid: parseInt(eventid, 10),
+        eventId: parseInt(eventId, 10),
         status: status.charAt(0).toUpperCase() + status.slice(1).toLowerCase(), // Ensure status matches ENUM format
       };
       console.log("registrationData", registrationData);
@@ -39,7 +39,7 @@ const CreateRegistration = () => {
       // Handle success
       console.log("Response:", response.data);
       setSuccess("Registration created successfully!");
-      setEventid("");
+      setEventId("");
     } catch (err) {
       // Handle error
       console.error("Error creating registration:", err);
@@ -67,16 +67,16 @@ const CreateRegistration = () => {
       >
         <div className="mb-4">
           <label
-            htmlFor="eventid"
+            htmlFor="eventId"
             className="block text-gray-700 text-sm font-bold mb-2"
           >
             Event ID
           </label>
           <input
             type="number"
-            id="eventid"
-            value={eventid}
-            onChange={(e) => setEventid(e.target.value)}
+            id="eventId"
+            value={eventId}
+            onChange={(e) => setEventId(e.target.value)}
             required
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Enter the Event ID"
@@ -98,7 +98,7 @@ const CreateRegistration = () => {
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           >
             <option value="Confirmed">Confirmed</option>
-            <option value="Cancelled">Cancelled</option>
+            <option value="Canceled">Canceled</option>
           </select>
         </div>
 
