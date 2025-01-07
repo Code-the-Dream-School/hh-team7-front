@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { UserAuthContext } from "../../contexts/UserAuthContext";
 import axios from "axios";
+import "../../App.css";
 
 const CreateRegistration = ({ onRegistrationCreated }) => {
   const { token } = useContext(UserAuthContext); // Access token and context function
@@ -46,7 +47,7 @@ const CreateRegistration = ({ onRegistrationCreated }) => {
       setUsername("");
     } catch (err) {
       // Handle error
-      console.error("Error creating registration:", err);
+      //console.error("Error creating registration:", err);
       setError(
         err.response?.data?.message ||
           "Failed to create registration. Please try again."
@@ -57,8 +58,10 @@ const CreateRegistration = ({ onRegistrationCreated }) => {
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">Create Event Registration</h1>
+    <div className="main-content">
+      <h1 className="text-2xl md:text-3xl font-bold mb-6 text-center">
+        Create Event Registration
+      </h1>
 
       {error && <p className="text-red-500 mb-4">{error}</p>}
       {success && <p className="text-green-500 mb-4">{success}</p>}
@@ -67,12 +70,12 @@ const CreateRegistration = ({ onRegistrationCreated }) => {
       {/* Registration Form */}
       <form
         onSubmit={handleSubmit}
-        className="max-w-lg mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+        className="responsive-form bg-white shadow-md rounded px-4 py-6 md:px-8 md:py-10"
       >
         <div className="mb-4">
           <label
             htmlFor="username"
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block font-bold mb-2 text-gray-700"
           >
             User Name
           </label>
@@ -89,7 +92,7 @@ const CreateRegistration = ({ onRegistrationCreated }) => {
         <div className="mb-4">
           <label
             htmlFor="eventid"
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block font-bold mb-2 text-gray-700 "
           >
             Event ID
           </label>
@@ -107,7 +110,7 @@ const CreateRegistration = ({ onRegistrationCreated }) => {
         <div className="mb-4">
           <label
             htmlFor="status"
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-sm md:text-base font-bold mb-2 text-gray-700"
           >
             Status
           </label>
@@ -126,7 +129,7 @@ const CreateRegistration = ({ onRegistrationCreated }) => {
         <div className="flex items-center justify-between">
           <button
             type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline"
             disabled={loading}
           >
             {loading ? "Submitting..." : "Create Registration"}

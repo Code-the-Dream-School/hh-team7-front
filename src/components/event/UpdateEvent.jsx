@@ -27,17 +27,20 @@ const UpdateEvent = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/v1/events/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          `http://localhost:8000/api/v1/events/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         const fetchedEvent = response.data;
 
-    setEventData({
-      ...fetchedEvent,
-      date: new Date(fetchedEvent.date).toISOString().slice(0, 16), // Format for <input type="datetime-local">
-    });
+        setEventData({
+          ...fetchedEvent,
+          date: new Date(fetchedEvent.date).toISOString().slice(0, 16), // Format for <input type="datetime-local">
+        });
       } catch (err) {
         console.error("Error fetching event data:", err);
         setError("Failed to fetch event data.");
@@ -69,15 +72,11 @@ const UpdateEvent = () => {
         price: parseFloat(eventData.price),
       };
 
-      await axios.put(
-        `http://localhost:8000/api/v1/events/${id}`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.put(`http://localhost:8000/api/v1/events/${id}`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       alert("Event updated successfully!");
       navigate("/manage-events");
@@ -90,12 +89,15 @@ const UpdateEvent = () => {
   };
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-4 sm:p-8 lg:p-6">
       <h2 className="text-2xl font-semibold mb-6">Update Event</h2>
       {error && <p className="text-red-500">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="name"
+            className="block text-sm font-medium text-gray-700"
+          >
             Event Name
           </label>
           <input
@@ -110,7 +112,10 @@ const UpdateEvent = () => {
         </div>
 
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="description"
+            className="block text-sm font-medium text-gray-700"
+          >
             Description
           </label>
           <textarea
@@ -123,7 +128,10 @@ const UpdateEvent = () => {
         </div>
 
         <div>
-          <label htmlFor="date" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="date"
+            className="block text-sm font-medium text-gray-700"
+          >
             Event Date
           </label>
           <input
@@ -138,7 +146,10 @@ const UpdateEvent = () => {
         </div>
 
         <div>
-          <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="location"
+            className="block text-sm font-medium text-gray-700"
+          >
             Location
           </label>
           <input
@@ -153,7 +164,10 @@ const UpdateEvent = () => {
         </div>
 
         <div>
-          <label htmlFor="capacity" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="capacity"
+            className="block text-sm font-medium text-gray-700"
+          >
             Capacity
           </label>
           <input
@@ -169,7 +183,10 @@ const UpdateEvent = () => {
         </div>
 
         <div>
-          <label htmlFor="status" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="status"
+            className="block text-sm font-medium text-gray-700"
+          >
             Status
           </label>
           <select
@@ -187,7 +204,10 @@ const UpdateEvent = () => {
         </div>
 
         <div>
-          <label htmlFor="event_type" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="event_type"
+            className="block text-sm font-medium text-gray-700"
+          >
             Event Type
           </label>
           <select
@@ -204,7 +224,10 @@ const UpdateEvent = () => {
         </div>
 
         <div>
-          <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="price"
+            className="block text-sm font-medium text-gray-700"
+          >
             Price
           </label>
           <input
@@ -219,7 +242,10 @@ const UpdateEvent = () => {
         </div>
 
         <div>
-          <label htmlFor="min_capacity" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="min_capacity"
+            className="block text-sm font-medium text-gray-700"
+          >
             Minimum Capacity
           </label>
           <input
@@ -234,7 +260,10 @@ const UpdateEvent = () => {
         </div>
 
         <div>
-          <label htmlFor="max_capacity" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="max_capacity"
+            className="block text-sm font-medium text-gray-700"
+          >
             Maximum Capacity
           </label>
           <input
@@ -249,7 +278,10 @@ const UpdateEvent = () => {
         </div>
 
         <div>
-          <label htmlFor="is_private" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="is_private"
+            className="block text-sm font-medium text-gray-700"
+          >
             Private Event
           </label>
           <input
@@ -263,7 +295,10 @@ const UpdateEvent = () => {
         </div>
 
         <div>
-          <label htmlFor="venue_details" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="venue_details"
+            className="block text-sm font-medium text-gray-700"
+          >
             Venue Details
           </label>
           <textarea
