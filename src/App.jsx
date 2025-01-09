@@ -13,6 +13,8 @@ import Register from "./components/user/Register";
 import Login from "./components/user/Login";
 import HomePage from "./components/HomePage";
 import ForgotPassword from "./components/user/ForgotPassword";
+import ResetPasswordVerify from "./components/user/ResetPasswordVerify";
+import ResetPasswordUpdate from "./components/user/ResetPasswordUpdate";
 import ManageUser from "./components/user/ManageUsers";
 import UpdateUser from "./components/user/UpdateUser";
 import { DefaultSidebar } from "./components/DefaultSidebar";
@@ -22,6 +24,13 @@ import CreateEvent from "./components/event/CreateEvent";
 import CreateRegistration from "./components/Registration/CreateRegistration";
 import ProtectedRoute from "./components/ProtectedRoute"; 
 import Unauthorized from "./components/Unauthorized";
+
+const QueryRouter = () => {
+  const location = useLocation();
+  const hasAuthParam = new URLSearchParams(location.search).has("auth");
+
+  return hasAuthParam ? <ResetPasswordVerify /> : <ForgotPassword />;
+};
 
 const App = () => {
   const location = useLocation(); // Get the current location (path)
@@ -42,7 +51,7 @@ const App = () => {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
+                
                 <Route path="/unauthorized" element={<Unauthorized />} />
                 
                 {/* Protected Routes */}
@@ -95,6 +104,9 @@ const App = () => {
                     </ProtectedRoute>
                   }
                 />
+        
+                <Route path="/forgot-password" element={<QueryRouter />} />
+                <Route path="/reset-password/update" element={<ResetPasswordUpdate />} />
               </Routes>
             </div>
           </div>
