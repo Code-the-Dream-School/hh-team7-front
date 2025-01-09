@@ -12,12 +12,10 @@ const UpdateEvent = () => {
     location: "",
     capacity: "",
     status: "draft",
-    event_type: "in-person",
+    eventType: "in-person",
     price: "",
-    min_capacity: "",
-    max_capacity: "",
-    is_private: false,
-    venue_details: "",
+    isPrivate: false,
+    registrationDeadline: ""
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -37,6 +35,7 @@ const UpdateEvent = () => {
     setEventData({
       ...fetchedEvent,
       date: new Date(fetchedEvent.date).toISOString().slice(0, 16), // Format for <input type="datetime-local">
+      registrationDeadline: new Date(fetchedEvent.registrationDeadline).toISOString().slice(0, 16),
     });
       } catch (err) {
         console.error("Error fetching event data:", err);
@@ -64,8 +63,6 @@ const UpdateEvent = () => {
       const payload = {
         ...eventData,
         capacity: parseInt(eventData.capacity, 10),
-        min_capacity: parseInt(eventData.min_capacity, 10),
-        max_capacity: parseInt(eventData.max_capacity, 10),
         price: parseFloat(eventData.price),
       };
 
@@ -138,6 +135,21 @@ const UpdateEvent = () => {
         </div>
 
         <div>
+          <label htmlFor="registrationDeadline" className="block text-sm font-medium text-gray-700">
+            Registration deadline
+          </label>
+          <input
+            type="datetime-local"
+            id="registrationDeadline"
+            name="registrationDeadline"
+            value={eventData.registrationDeadline}
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            required
+          />
+        </div>
+
+        <div>
           <label htmlFor="location" className="block text-sm font-medium text-gray-700">
             Location
           </label>
@@ -179,27 +191,27 @@ const UpdateEvent = () => {
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
           >
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
-            <option value="cancelled">Cancelled</option>
-            <option value="completed">Completed</option>
+            <option value="Draft">Draft</option>
+            <option value="Published">Published</option>
+            <option value="Canceled">Canceled</option>
+            <option value="Completed">Completed</option>
           </select>
         </div>
 
         <div>
-          <label htmlFor="event_type" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="eventType" className="block text-sm font-medium text-gray-700">
             Event Type
           </label>
           <select
-            id="event_type"
-            name="event_type"
-            value={eventData.event_type}
+            id="eventType"
+            name="eventType"
+            value={eventData.eventType}
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
           >
-            <option value="in-person">In-Person</option>
-            <option value="virtual">Virtual</option>
-            <option value="hybrid">Hybrid</option>
+            <option value="In-person">In-person</option>
+            <option value="Virtual">Virtual</option>
+            <option value="Hybrid">Hybrid</option>
           </select>
         </div>
 
@@ -219,59 +231,16 @@ const UpdateEvent = () => {
         </div>
 
         <div>
-          <label htmlFor="min_capacity" className="block text-sm font-medium text-gray-700">
-            Minimum Capacity
-          </label>
-          <input
-            type="number"
-            id="min_capacity"
-            name="min_capacity"
-            value={eventData.min_capacity}
-            onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            min="0"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="max_capacity" className="block text-sm font-medium text-gray-700">
-            Maximum Capacity
-          </label>
-          <input
-            type="number"
-            id="max_capacity"
-            name="max_capacity"
-            value={eventData.max_capacity}
-            onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            min="1"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="is_private" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="isPrivate" className="block text-sm font-medium text-gray-700">
             Private Event
           </label>
           <input
             type="checkbox"
-            id="is_private"
-            name="is_private"
-            checked={eventData.is_private}
+            id="isPrivate"
+            name="isPrivate"
+            checked={eventData.isPrivate}
             onChange={handleChange}
             className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="venue_details" className="block text-sm font-medium text-gray-700">
-            Venue Details
-          </label>
-          <textarea
-            id="venue_details"
-            name="venue_details"
-            value={eventData.venue_details}
-            onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
 
