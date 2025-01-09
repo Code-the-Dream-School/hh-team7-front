@@ -20,7 +20,7 @@ const CreateRegistration = () => {
 
     try {
       const registrationData = {
-        eventId: parseInt(eventId, 10),
+        EventId: parseInt(eventId, 10),
         status: status.charAt(0).toUpperCase() + status.slice(1).toLowerCase(), // Ensure status matches ENUM format
       };
       console.log("registrationData", registrationData);
