@@ -28,7 +28,43 @@ export const AuthProvider = ({ children }) => {
     }
   };
   
-
+  const requestPasswordReset = async (email) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/v1/users/password-reset/request",
+        { email }
+      );
+      return response.data; // Handle success (even if email doesn't exist)
+    } catch (error) {
+      console.error("Error requesting password reset:", error);
+      throw error.response?.data?.message || "Password reset request failed.";
+    }
+  };
+  
+  const verifyPasswordResetToken = async (token) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8000/api/v1/users/password-reset/verify?auth=${token}`
+      );
+      return response.data; // Handle success
+    } catch (error) {
+      console.error("Error verifying password reset token:", error);
+      throw error.response?.data?.message || "Token verification failed.";
+    }
+  };
+  
+  const updatePassword = async (token, password) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8000/api/v1/users/password-reset/update?auth=${token}`,
+        { password }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error updating password:", error);
+      throw error.response?.data?.message || "Password update failed.";
+    }
+  };
   // Initialize user state on app load
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -131,6 +167,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+
+  
+  
   return (
     <AuthContext.Provider
       value={{
@@ -142,6 +181,9 @@ export const AuthProvider = ({ children }) => {
         getAllUsers,
         updateUser,
         deleteUser,
+        requestPasswordReset,
+        verifyPasswordResetToken,
+        updatePassword,
       }}
     >
       {children}
