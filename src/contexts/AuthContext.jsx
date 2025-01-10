@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 
 export const AuthContext = createContext();
 
@@ -7,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token") || null);
 
-  const API_URL = "http://localhost:8000/api/v1/users";
+  const API_URL = `${apiBaseUrl}/users`;
 
   const decodeToken = (token) => {
     try {
@@ -31,7 +32,7 @@ export const AuthProvider = ({ children }) => {
   const requestPasswordReset = async (email) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/users/password-reset/request",
+        `${apiBaseUrl}/users/password-reset/request`,
         { email }
       );
       return response.data; // Handle success (even if email doesn't exist)
@@ -44,7 +45,7 @@ export const AuthProvider = ({ children }) => {
   const verifyPasswordResetToken = async (token) => {
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/v1/users/password-reset/verify?auth=${token}`
+        `${apiBaseUrl}/users/password-reset/verify?auth=${token}`
       );
       return response.data; // Handle success
     } catch (error) {
@@ -56,7 +57,7 @@ export const AuthProvider = ({ children }) => {
   const updatePassword = async (token, password) => {
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/v1/users/password-reset/update?auth=${token}`,
+        `${apiBaseUrl}/users/password-reset/update?auth=${token}`,
         { password }
       );
       return response.data;
@@ -97,6 +98,7 @@ export const AuthProvider = ({ children }) => {
   // Login a user
   const login = async (credentials) => {
     try {
+      console.log("credentials",credentials);
       const response = await axios.post(`${API_URL}/login`, credentials);
       setUser(response.data.user);
       setToken(response.data.token);

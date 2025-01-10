@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { UserAuthContext } from "../../contexts/UserAuthContext";
 import axios from "axios";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 
 const CreateRegistration = () => {
   const { token, createRegistration } = useContext(UserAuthContext); // Access token and context function
@@ -27,7 +28,7 @@ const CreateRegistration = () => {
       console.log("Token:", token);
 
       const response = await axios.post(
-        "http://localhost:8000/api/v1/registrations",
+        `${apiBaseUrl}/registrations`,
         registrationData,
         {
           headers: {
