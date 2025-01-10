@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { EventCard, CardContent } from "./EventCard";
+import { EventCard, CardContent } from "@/components/public-event/EventCard";
 import { Calendar, MapPin, Users, Search } from "lucide-react";
 import { Link } from "react-router-dom";
-import { fetchEvents } from "../../contexts/PublicEventContext";
 import axios from "axios";
-import defaultEventImage from './img/default-event.jpg';
+import defaultEventImage from '@/components/public-event/img/default-event.jpg';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 
 const PublicEvents = () => {
