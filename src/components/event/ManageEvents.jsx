@@ -43,7 +43,7 @@ const ManageEvents = () => {
     { name: "Location", selector: (row) => row.location, sortable: true },
     { name: "Capacity", selector: (row) => row.capacity, sortable: true },
     { name: "Event Date", selector: (row) => format(new Date(row.date), "MM/dd/yyyy h:mm a"), sortable: true },
-    { name: "Event Type", selector: (row) => row.event_type, sortable: true },
+    { name: "Event Type", selector: (row) => row.eventType, sortable: true },
     { name: "Event Status", selector: (row) => row.status, sortable: true },
     { name: "Actions", cell: (row) => (
         <>

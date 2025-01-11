@@ -13,6 +13,8 @@ import Register from "./components/user/Register";
 import Login from "./components/user/Login";
 import HomePage from "./components/HomePage";
 import ForgotPassword from "./components/user/ForgotPassword";
+import ResetPasswordVerify from "./components/user/ResetPasswordVerify";
+import ResetPasswordUpdate from "./components/user/ResetPasswordUpdate";
 import ManageUser from "./components/user/ManageUsers";
 import UpdateUser from "./components/user/UpdateUser";
 import { DefaultSidebar } from "./components/DefaultSidebar";
@@ -21,6 +23,17 @@ import UpdateEvent from "./components/event/UpdateEvent";
 import CreateEvent from "./components/event/CreateEvent";
 import CreateRegistration from "./components/Registration/CreateRegistration";
 import ManageRegistration from "./components/Registration/manageRegistration";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Unauthorized from "./components/Unauthorized";
+import PublicEvent from "./components/public-event/PublicEvents";
+import EventDetailPage from "./components/public-event/EventDetailPage";
+
+const QueryRouter = () => {
+  const location = useLocation();
+  const hasAuthParam = new URLSearchParams(location.search).has("auth");
+
+  return hasAuthParam ? <ResetPasswordVerify /> : <ForgotPassword />;
+};
 
 const App = () => {
   const location = useLocation(); // Get the current location (path)
@@ -41,14 +54,62 @@ const App = () => {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/manage-users" element={<ManageUser />} />
-                <Route path="/update-user/:id" element={<UpdateUser />} />
+                <Route path="/public-event" element={<PublicEvent />} />
+                <Route path="/events/:id" element={<EventDetailPage />} />
+                <Route path="/unauthorized" element={<Unauthorized />} />
 
-                <Route path="/manage-events" element={<ManageEvents />} />
-                <Route path="/create-event" element={<CreateEvent />} />
-                <Route path="/update-event/:id" element={<UpdateEvent />} />
-                <Route path="/registrations" element={<CreateRegistration />} />
+                {/* Protected Routes */}
+                <Route
+                  path="/manage-users"
+                  element={
+                    <ProtectedRoute allowedRoles={["admin", "organizer"]}>
+                      <ManageUser />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/update-user/:id"
+                  element={
+                    <ProtectedRoute allowedRoles={["admin", "organizer"]}>
+                      <UpdateUser />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
+                  path="/manage-events"
+                  element={
+                    <ProtectedRoute allowedRoles={["admin", "organizer"]}>
+                      <ManageEvents />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/create-event"
+                  element={
+                    <ProtectedRoute allowedRoles={["admin", "organizer"]}>
+                      <CreateEvent />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/update-event/:id"
+                  element={
+                    <ProtectedRoute allowedRoles={["admin", "organizer"]}>
+                      <UpdateEvent />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/registrations"
+                  element={
+                    <ProtectedRoute
+                      allowedRoles={["admin", "organizer", "attendee"]}
+                    >
+                      <CreateRegistration />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/manage-register"
                   element={
@@ -56,6 +117,12 @@ const App = () => {
                       <ManageRegistration />
                     </ProtectedRoute>
                   }
+                />
+
+                <Route path="/forgot-password" element={<QueryRouter />} />
+                <Route
+                  path="/reset-password/update"
+                  element={<ResetPasswordUpdate />}
                 />
               </Routes>
             </div>
