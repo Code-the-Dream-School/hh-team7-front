@@ -50,8 +50,12 @@ const App = () => {
                 <Route path="/update-event/:id" element={<UpdateEvent />} />
                 <Route path="/registrations" element={<CreateRegistration />} />
                 <Route
-                  path="manage-register"
-                  element={<ManageRegistration />}
+                  path="/manage-register"
+                  element={
+                    <ProtectedRoute allowedRoles={["admin", "organizer"]}>
+                      <ManageRegistration />
+                    </ProtectedRoute>
+                  }
                 />
               </Routes>
             </div>
