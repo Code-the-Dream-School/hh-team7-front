@@ -59,7 +59,8 @@ const ManageUsers = () => {
     },
     {
       name: "Created Date",
-      selector: (row) => format(new Date(row.created_date), "MM/dd/yyyy h:mm a"),
+      selector: (row) =>
+        format(new Date(row.created_date), "MM/dd/yyyy h:mm a"),
       sortable: true,
     },
     {
