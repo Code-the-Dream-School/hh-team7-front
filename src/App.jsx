@@ -22,7 +22,8 @@ import ManageEvents from "./components/event/ManageEvents";
 import UpdateEvent from "./components/event/UpdateEvent";
 import CreateEvent from "./components/event/CreateEvent";
 import CreateRegistration from "./components/Registration/CreateRegistration";
-import ProtectedRoute from "./components/ProtectedRoute"; 
+import ManageRegistration from "./components/Registration/manageRegistration";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./components/Unauthorized";
 import PublicEvent from "./components/public-event/PublicEvents";
 import EventDetailPage from "./components/public-event/EventDetailPage";
@@ -56,7 +57,7 @@ const App = () => {
                 <Route path="/public-event" element={<PublicEvent />} />
                 <Route path="/events/:id" element={<EventDetailPage />} />
                 <Route path="/unauthorized" element={<Unauthorized />} />
-                
+
                 {/* Protected Routes */}
                 <Route
                   path="/manage-users"
@@ -102,14 +103,27 @@ const App = () => {
                 <Route
                   path="/registrations"
                   element={
-                    <ProtectedRoute allowedRoles={["admin", "organizer", "attendee"]}>
+                    <ProtectedRoute
+                      allowedRoles={["admin", "organizer", "attendee"]}
+                    >
                       <CreateRegistration />
                     </ProtectedRoute>
                   }
                 />
-        
+                <Route
+                  path="/manage-register"
+                  element={
+                    <ProtectedRoute allowedRoles={["admin", "organizer"]}>
+                      <ManageRegistration />
+                    </ProtectedRoute>
+                  }
+                />
+
                 <Route path="/forgot-password" element={<QueryRouter />} />
-                <Route path="/reset-password/update" element={<ResetPasswordUpdate />} />
+                <Route
+                  path="/reset-password/update"
+                  element={<ResetPasswordUpdate />}
+                />
               </Routes>
             </div>
           </div>

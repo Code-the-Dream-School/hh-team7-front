@@ -9,6 +9,7 @@ const CreateRegistration = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [username, setUsername] = useState("");
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -31,7 +32,8 @@ const CreateRegistration = () => {
         registrationData,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Pass token for authentication
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         }
       );
