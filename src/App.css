@@ -21,6 +21,15 @@ body {
   padding: 1rem;
   transition: margin-left 0.3s ease-in-out;
 }
+.main_content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  min-height: 100vh;
+  transition: margin-left 0.3s ease-in-out;
+}
 
 @media screen and (min-width: 640px) {
   .sidebar {
@@ -91,4 +100,17 @@ body {
 table {
   width: 100%;
   border-collapse: collapse;
+}
+@media (min-width: 768px) {
+  .main_content .container {
+    max-width: 600px;
+  }
+}
+
+/* Center form container on very large screens */
+@media (min-width: 1024px) {
+  .main_content .container {
+    max-width: 700px;
+    margin: auto;
+  }
 }
