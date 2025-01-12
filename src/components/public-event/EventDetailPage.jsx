@@ -13,6 +13,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import axios from "axios";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 
 const EventDetailPage = () => {
   const { id } = useParams();
@@ -23,9 +24,10 @@ const EventDetailPage = () => {
     const fetchEvent = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/v1/public-events/${id}`
+          `${apiBaseUrl}/public-events/${id}`
         );
         setEvent(response.data);
+        console.log("response.data",response);
       } catch (error) {
         console.error("Error fetching event details:", error);
       }
@@ -72,7 +74,7 @@ const EventDetailPage = () => {
       {/* Hero Section */}
       <div className="relative h-96 bg-gray-900">
         <img
-          src={event.imageUrl}
+          src={event.eventBannerUrl}
           alt={event.title}
           className="w-full h-full object-cover opacity-80"
         />
