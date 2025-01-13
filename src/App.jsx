@@ -4,6 +4,7 @@ import {
   Route,
   Routes,
   useLocation,
+  Navigate,
 } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { EventProvider } from "./contexts/EventContext";
@@ -124,6 +125,7 @@ const App = () => {
                   path="/reset-password/update"
                   element={<ResetPasswordUpdate />}
                 />
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </div>
           </div>
