@@ -57,7 +57,7 @@ const UpdateUser = () => {
         }
       );
       alert("User updated successfully!");
-      navigate("/manage-users"); // Redirect to manage users page
+      navigate("/profile"); // Redirect to manage users page
     } catch (err) {
       console.error("Error updating user:", err);
       setError("Failed to update user.");
