@@ -1,12 +1,13 @@
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 
 export const UserAuthContext = createContext();
 
 export const UserAuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
 
-  const API_URL = "http://localhost:8000/api/v1";
+  const API_URL = `${apiBaseUrl}`;
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");

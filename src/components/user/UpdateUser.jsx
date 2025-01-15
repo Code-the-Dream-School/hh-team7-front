@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
 import axios from "axios";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 
 const UpdateUser = () => {
   const { user, token } = useContext(AuthContext);
@@ -19,15 +20,14 @@ const UpdateUser = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/api/v1/users/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+
+        const response = await axios.get(`${apiBaseUrl}/users/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setUserData(response.data);
+
       } catch (err) {
         console.error("Error fetching user data:", err);
         setError("Failed to fetch user data.");
@@ -49,13 +49,19 @@ const UpdateUser = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.put(`http://localhost:8000/api/v1/users/${id}`, userData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+
+      await axios.put(
+        `${apiBaseUrl}/users/${id}`,
+        userData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       alert("User updated successfully!");
-      navigate("/manage-users"); // Redirect to manage users page
+      navigate("/profile"); // Redirect to manage users page
     } catch (err) {
       console.error("Error updating user:", err);
       setError("Failed to update user.");

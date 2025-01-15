@@ -1,11 +1,15 @@
 import React, { useContext, useState } from "react";
 import { UserAuthContext } from "../../contexts/UserAuthContext";
 import axios from "axios";
-import "../../App.css";
+import "../..App.css";
+
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
+
+
 
 const CreateRegistration = ({ onRegistrationCreated }) => {
   const { token } = useContext(UserAuthContext); // Access token and context function
-  const [eventid, setEventid] = useState(""); // State for event ID
+  const [eventId, setEventId] = useState(""); // State for event ID
   const [status, setStatus] = useState("Confirmed"); // Default status
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -22,14 +26,14 @@ const CreateRegistration = ({ onRegistrationCreated }) => {
 
     try {
       const registrationData = {
-        eventid: parseInt(eventid, 10),
+        EventId: parseInt(eventId, 10),
         status: status.charAt(0).toUpperCase() + status.slice(1).toLowerCase(), // Ensure status matches ENUM format
       };
       console.log("registrationData", registrationData);
       console.log("Token:", token);
 
       const response = await axios.post(
-        "http://localhost:8000/api/v1/registrations",
+        `${apiBaseUrl}/registrations`,
         registrationData,
         {
           headers: {
@@ -43,8 +47,10 @@ const CreateRegistration = ({ onRegistrationCreated }) => {
       console.log("Response:", response.data);
       onRegistrationCreated(response.data);
       setSuccess("Registration created successfully!");
-      setEventid("");
+
+      setEventId("");
       setUsername("");
+
     } catch (err) {
       // Handle error
       //console.error("Error creating registration:", err);
@@ -68,7 +74,7 @@ const CreateRegistration = ({ onRegistrationCreated }) => {
       {loading && <p className="text-blue-500">Processing...</p>}
 
       {/* Registration Form */}
-      <form
+       <form
         onSubmit={handleSubmit}
         className="responsive-form bg-white shadow-md rounded px-4 py-6 md:px-8 md:py-10"
       >
@@ -91,16 +97,16 @@ const CreateRegistration = ({ onRegistrationCreated }) => {
         </div>
         <div className="mb-4">
           <label
-            htmlFor="eventid"
-            className="block font-bold mb-2 text-gray-700 "
+            htmlFor="eventId"
+            className="block text-gray-700 text-sm font-bold mb-2"
           >
             Event ID
           </label>
           <input
             type="number"
-            id="eventid"
-            value={eventid}
-            onChange={(e) => setEventid(e.target.value)}
+            id="eventId"
+            value={eventId}
+            onChange={(e) => setEventId(e.target.value)}
             required
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Enter the Event ID"
@@ -122,7 +128,7 @@ const CreateRegistration = ({ onRegistrationCreated }) => {
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           >
             <option value="Confirmed">Confirmed</option>
-            <option value="Cancelled">Cancelled</option>
+            <option value="Canceled">Canceled</option>
           </select>
         </div>
 

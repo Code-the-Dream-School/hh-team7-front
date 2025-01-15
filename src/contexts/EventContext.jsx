@@ -1,5 +1,6 @@
 import React, { createContext, useState } from "react";
 import axios from "axios";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 
 export const EventContext = createContext();
 
@@ -7,7 +8,7 @@ export const EventProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem("token") || null);
   
-    const API_URL = "http://localhost:8000/api/v1/events";
+    const API_URL = `${apiBaseUrl}/events`;
   
     // Fetch all events
     const getAllEvents = async () => {
@@ -28,7 +29,7 @@ export const EventProvider = ({ children }) => {
     const createEvent = async (eventData) => {
         try {
           const response = await axios.post(
-            'http://localhost:8000/api/v1/events', 
+            `${apiBaseUrl}/events`, 
             eventData,
             {
               headers: {
