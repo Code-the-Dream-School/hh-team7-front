@@ -1,3 +1,4 @@
+
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
@@ -5,7 +6,7 @@ import axios from "axios";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 
 const CreateEvent = () => {
-  const { token } = useContext(AuthContext); // Access token
+  const { token } = useContext(AuthContext);
   const [eventData, setEventData] = useState({
     name: "",
     description: "",
@@ -16,13 +17,22 @@ const CreateEvent = () => {
     eventType: "In-person",
     price: "",
     isPrivate: false,
-    registrationDeadline: ""
+    registrationDeadline: "",
   });
-
+  const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  const EVENT_CATEGORIES = [
+    { value: "Technology", label: "Technology" },
+    { value: "Design", label: "Design" },
+    { value: "Business", label: "Business" },
+    { value: "Art", label: "Art" },
+    { value: "Music", label: "Music" },
+  ];
+  
+  // Handle form field changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setEventData((prevData) => ({
@@ -31,19 +41,40 @@ const CreateEvent = () => {
     }));
   };
 
+  // Handle file selection
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      if (selectedFile.size > 5 * 1024 * 1024) { // 5MB limit
+        alert("File size exceeds 5MB.");
+        return;
+      }
+      if (!selectedFile.type.startsWith("image/")) {
+        alert("Only image files are allowed.");
+        return;
+      }
+      setFile(selectedFile);
+    }
+  };
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
+  
     try {
-      const payload = {
-        ...eventData,
-        capacity: parseInt(eventData.capacity, 10),
-        price: parseFloat(eventData.price),
-      };
+      const formData = new FormData();
 
-      await axios.post(`${apiBaseUrl}/events`, payload, {
+      for (const key in eventData) {
+        formData.append(key, eventData[key]);
+      }
+  
+      if (file) {
+        formData.append("file", file); 
+      }
+  
+      const response = await axios.post("http://localhost:8000/api/v1/events", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -58,7 +89,7 @@ const CreateEvent = () => {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="container mx-auto p-6">
       <h2 className="text-2xl font-semibold mb-6">Create Event</h2>
@@ -200,7 +231,42 @@ const CreateEvent = () => {
             min="0"
           />
         </div>
-
+        <div>
+  <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+    Category
+  </label>
+  <select
+    id="category"
+    name="category"
+    value={eventData.category || ""}
+    onChange={handleChange}
+    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+    required
+  >
+    <option value="" disabled>
+      Select a category
+    </option>
+    {EVENT_CATEGORIES.map((category) => (
+      <option key={category.value} value={category.value}>
+        {category.label}
+      </option>
+    ))}
+  </select>
+</div>
+{/* Event Banner Upload */}
+<div>
+          <label htmlFor="file" className="block text-sm font-medium text-gray-700">
+            Event Banner
+          </label>
+          <input
+            type="file"
+            id="file"
+            name="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
         <div>
           <label htmlFor="isPrivate" className="block text-sm font-medium text-gray-700">
             Private Event

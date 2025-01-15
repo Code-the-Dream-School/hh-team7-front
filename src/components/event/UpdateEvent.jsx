@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
 import axios from "axios";
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 
 const UpdateEvent = () => {
   const { token } = useContext(AuthContext);
@@ -16,29 +15,41 @@ const UpdateEvent = () => {
     eventType: "in-person",
     price: "",
     isPrivate: false,
-    registrationDeadline: ""
+    registrationDeadline: "",
+    category: "",
   });
+  const [file, setFile] = useState(null); 
+  const [previewUrl, setPreviewUrl] = useState(null); 
+  const [existingBannerUrl, setExistingBannerUrl] = useState(""); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const EVENT_CATEGORIES = [
+    { value: "Technology", label: "Technology" },
+    { value: "Design", label: "Design" },
+    { value: "Business", label: "Business" },
+    { value: "Art", label: "Art" },
+    { value: "Music", label: "Music" },
+  ];
+
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const response = await axios.get(`${apiBaseUrl}/events/${id}`, {
+        const response = await axios.get(`http://localhost:8000/api/v1/events/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         const fetchedEvent = response.data;
 
-    setEventData({
-      ...fetchedEvent,
-      date: new Date(fetchedEvent.date).toISOString().slice(0, 16), // Format for <input type="datetime-local">
-      registrationDeadline: new Date(fetchedEvent.registrationDeadline).toISOString().slice(0, 16),
-    });
-
+        setEventData({
+          ...fetchedEvent,
+          date: new Date(fetchedEvent.date).toISOString().slice(0, 16), 
+          registrationDeadline: new Date(fetchedEvent.registrationDeadline).toISOString().slice(0, 16),
+        });
+        setExistingBannerUrl(fetchedEvent.eventBannerUrl); 
       } catch (err) {
         console.error("Error fetching event data:", err);
         setError("Failed to fetch event data.");
@@ -56,22 +67,40 @@ const UpdateEvent = () => {
     }));
   };
 
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      if (selectedFile.size > 5 * 1024 * 1024) { // 5MB limit
+        alert("File size exceeds 5MB.");
+        return;
+      }
+      if (!selectedFile.type.startsWith("image/")) {
+        alert("Only image files are allowed.");
+        return;
+      }
+      setFile(selectedFile);
+      setPreviewUrl(URL.createObjectURL(selectedFile)); 
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      const payload = {
-        ...eventData,
-        capacity: parseInt(eventData.capacity, 10),
-        price: parseFloat(eventData.price),
-      };
+      const formData = new FormData();
+      for (const key in eventData) {
+        formData.append(key, eventData[key]);
+      }
 
+      if (file) {
+        formData.append("file", file); 
+      }
 
       await axios.put(
-        `${apiBaseUrl}/events/${id}`,
-        payload,
+        `http://localhost:8000/api/v1/events/${id}`,
+        formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -90,15 +119,12 @@ const UpdateEvent = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 sm:p-8 lg:p-6">
+    <div className="container mx-auto p-6">
       <h2 className="text-2xl font-semibold mb-6">Update Event</h2>
       {error && <p className="text-red-500">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label
-            htmlFor="name"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
             Event Name
           </label>
           <input
@@ -113,10 +139,7 @@ const UpdateEvent = () => {
         </div>
 
         <div>
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
             Description
           </label>
           <textarea
@@ -129,10 +152,7 @@ const UpdateEvent = () => {
         </div>
 
         <div>
-          <label
-            htmlFor="date"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="date" className="block text-sm font-medium text-gray-700">
             Event Date
           </label>
           <input
@@ -147,47 +167,37 @@ const UpdateEvent = () => {
         </div>
 
         <div>
-  <label
-    htmlFor="registrationDeadline"
-    className="block text-sm font-medium text-gray-700"
-  >
-    Registration Deadline
-  </label>
-  <input
-    type="datetime-local"
-    id="registrationDeadline"
-    name="registrationDeadline"
-    value={eventData.registrationDeadline}
-    onChange={handleChange}
-    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-    required
-  />
-</div>
-
-<div>
-  <label
-    htmlFor="location"
-    className="block text-sm font-medium text-gray-700"
-  >
-    Location
-  </label>
-  <input
-    type="text"
-    id="location"
-    name="location"
-    value={eventData.location}
-    onChange={handleChange}
-    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-    required
-  />
-</div>
-
+          <label htmlFor="registrationDeadline" className="block text-sm font-medium text-gray-700">
+            Registration Deadline
+          </label>
+          <input
+            type="datetime-local"
+            id="registrationDeadline"
+            name="registrationDeadline"
+            value={eventData.registrationDeadline}
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            required
+          />
+        </div>
 
         <div>
-          <label
-            htmlFor="capacity"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+            Location
+          </label>
+          <input
+            type="text"
+            id="location"
+            name="location"
+            value={eventData.location}
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            required
+          />
+        </div>
+
+        <div>
+          <label htmlFor="capacity" className="block text-sm font-medium text-gray-700">
             Capacity
           </label>
           <input
@@ -203,10 +213,7 @@ const UpdateEvent = () => {
         </div>
 
         <div>
-          <label
-            htmlFor="status"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="status" className="block text-sm font-medium text-gray-700">
             Status
           </label>
           <select
@@ -224,12 +231,7 @@ const UpdateEvent = () => {
         </div>
 
         <div>
-
           <label htmlFor="eventType" className="block text-sm font-medium text-gray-700">
-          <label
-            htmlFor="event_type"
-            className="block text-sm font-medium text-gray-700"
-          >
             Event Type
           </label>
           <select
@@ -246,10 +248,7 @@ const UpdateEvent = () => {
         </div>
 
         <div>
-          <label
-            htmlFor="price"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="price" className="block text-sm font-medium text-gray-700">
             Price
           </label>
           <input
@@ -264,47 +263,57 @@ const UpdateEvent = () => {
         </div>
 
         <div>
-
-          <label
-            htmlFor="min_capacity"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Minimum Capacity
+          <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+            Category
           </label>
-          <input
-            type="number"
-            id="min_capacity"
-            name="min_capacity"
-            value={eventData.min_capacity}
+          <select
+            id="category"
+            name="category"
+            value={eventData.category}
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            min="0"
+            required
+          >
+            <option value="" disabled>
+              Select a category
+            </option>
+            {EVENT_CATEGORIES.map((category) => (
+              <option key={category.value} value={category.value}>
+                {category.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Event Banner Upload */}
+        <div>
+          <label htmlFor="file" className="block text-sm font-medium text-gray-700">
+            Event Banner
+          </label>
+          {existingBannerUrl && (
+            <div className="mb-4">
+              <p className="text-sm text-gray-500">Current Banner:</p>
+              <img src={existingBannerUrl} alt="Event Banner" className="w-64 h-auto rounded-md" />
+            </div>
+          )}
+          {previewUrl && (
+            <div className="mb-4">
+              <p className="text-sm text-gray-500">New Banner Preview:</p>
+              <img src={previewUrl} alt="New Event Banner" className="w-64 h-auto rounded-md" />
+            </div>
+          )}
+          <input
+            type="file"
+            id="file"
+            name="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
 
         <div>
-          <label
-            htmlFor="max_capacity"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Maximum Capacity
-          </label>
-          <input
-            type="number"
-            id="max_capacity"
-            name="max_capacity"
-            value={eventData.max_capacity}
-            onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            min="1"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="is_private"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="isPrivate" className="block text-sm font-medium text-gray-700">
             Private Event
           </label>
           <input
@@ -317,21 +326,6 @@ const UpdateEvent = () => {
           />
         </div>
 
-        <div>
-          <label
-            htmlFor="venue_details"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Venue Details
-          </label>
-          <textarea
-            id="venue_details"
-            name="venue_details"
-            value={eventData.venue_details}
-            onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
         <button
           type="submit"
           disabled={loading}

@@ -20,7 +20,7 @@ const PublicEvents = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
   
-    const ITEMS_PER_PAGE = 6;
+    const ITEMS_PER_PAGE = 12;
   
     useEffect(() => {
       fetchEvents();
@@ -77,7 +77,7 @@ const PublicEvents = () => {
                   Clear
                 </button>
               </div>
-  
+    
               <div className="space-y-6">
                 {/* Category Filter */}
                 <div>
@@ -102,7 +102,7 @@ const PublicEvents = () => {
             </CardContent>
           </EventCard>
         </div>
-  
+    
         {/* Main Content */}
         <div className="flex-1 space-y-6">
           <div className="flex items-center justify-between">
@@ -118,44 +118,43 @@ const PublicEvents = () => {
               />
             </div>
           </div>
-  
-          {/* Event Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-          {events.length > 0 ? (
-            events.map((event) => (
-              <Link key={event.id} to={`/public-event/${event.id}`}>
-                <EventCard key={event.id}>
-                  <img
-                    src={event.eventBannerUrl || defaultEventImage}
-                    alt={event.title}
-                    className="w-full h-48 object-cover rounded-t-lg"
-                  />
-                  <CardContent className="pt-4">
-                    <h3 className="font-medium text-lg mb-2">{event.name}</h3>
-                    <div className="space-y-2 text-sm text-gray-600">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4" />
-                        {new Date(event.date).toLocaleDateString()}
+    
+         {/* Event Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {events.length > 0 ? (
+              events.map((event) => (
+                <Link key={event.id} to={`/events/${event.id}`}>
+                  <EventCard key={event.id}>
+                    <img
+                      src={event.eventBannerUrl || defaultEventImage}
+                      alt={event.title}
+                      className="w-full h-48 object-cover rounded-t-lg"
+                    />
+                    <CardContent className="pt-4">
+                      <h3 className="font-medium text-lg mb-2">{event.name}</h3>
+                      <div className="space-y-2 text-sm text-gray-600">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
+                          {new Date(event.date).toLocaleDateString()}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4" />
+                          {event.location}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Users className="h-4 w-4" />
+                          {event.capacity} participants
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4" />
-                        {event.location}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4" />
-                        {event.capacity} participants
-                      </div>
-                    </div>
-                  </CardContent>
-                </EventCard>
-              </Link>
-            ))
-          ) : (
-            <p className="text-gray-500 text-center">No events found.</p>
-          )}
-        </div>
-
-  
+                    </CardContent>
+                  </EventCard>
+                </Link>
+              ))
+            ) : (
+              <p className="text-gray-500 text-center">No events found.</p>
+            )}
+          </div>
+    
           {/* Pagination */}
           <div className="flex justify-center space-x-2">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
