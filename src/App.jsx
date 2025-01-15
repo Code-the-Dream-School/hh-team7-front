@@ -23,6 +23,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./components/Unauthorized";
 import PublicEvent from "./components/public-event/PublicEvents";
 import EventDetailPage from "./components/public-event/EventDetailPage";
+import ProfilePage from "./components/user/ProfilePage";
 
 const QueryRouter = () => {
   const location = useLocation();
@@ -51,10 +52,11 @@ const App = () => {
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/public-event" element={<PublicEvent />} />
-                <Route path="/events/:id" element={<EventDetailPage />} />
+                <Route path="/public-event/:id" element={<EventDetailPage />} />
                 <Route path="/unauthorized" element={<Unauthorized />} />
                 {/* <Route path="/manage-users" element={<ManageUser />} />
                 <Route path="/manage-events" element={<ManageEvents />} /> */}
+                <Route path="/profile" element={<ProfilePage />}/>
                 {/* Protected Routes */}
                 <Route
                   path="/manage-users"
@@ -120,6 +122,7 @@ const App = () => {
                   path="/reset-password/update"
                   element={<ResetPasswordUpdate />}
                 />
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </div>
           </div>

@@ -10,39 +10,108 @@ const Header = () => {
   };
 
   return (
-    <header className="p-4 bg-gray-800 text-white">
-      <div className="container mx-auto flex justify-between items-center">
-
-        <Link to="/" className="text-xl font-bold ">
-          Event Management
-        </Link>
-
-        {user ? (
-          <div>
-            <span className="mr-4">Welcome, {user.name}</span>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-red-600 rounded hover:bg-red-700"
-            >
-              Logout
-            </button>
+    <header className="bg-white shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16 items-center">
+          <div className="flex-shrink-0">
+            <h1 className="text-3xl font-bold text-gray-800">Event Platform</h1> 
           </div>
-        ) : (
-          <div className="space-x-4">
-            <a
-              href="/register"
-              className="px-4 py-2 bg-green-600 rounded hover:bg-green-700"
-            >
-              Register
-            </a>
-            <a
-              href="/login"
-              className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700"
-            >
-              Login
-            </a>
+
+          <nav className="hidden md:flex space-x-10"> 
+            {user ? (
+              <>
+                <Link
+                  to="/"
+                  className={`inline-flex items-center px-1 pt-1 text-lg font-medium ${
+                    location.pathname === "/" 
+                      ? 'text-blue-600 border-b-2 border-blue-600' 
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  Home
+                </Link>
+                <Link
+                  to="/public-event"
+                  className={`inline-flex items-center px-1 pt-1 text-lg font-medium ${
+                    location.pathname === "/public-event" 
+                      ? 'text-blue-600 border-b-2 border-blue-600' 
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  Events
+                </Link>
+                <Link
+                  to="/profile"
+                  className={`inline-flex items-center px-1 pt-1 text-lg font-medium ${
+                    location.pathname === "/profile" 
+                      ? 'text-blue-600 border-b-2 border-blue-600' 
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  Profile
+                </Link>
+                <Link
+                  to="/create-event"
+                  className={`inline-flex items-center px-1 pt-1 text-lg font-medium ${
+                    location.pathname === "/create-event" 
+                      ? 'text-blue-600 border-b-2 border-blue-600' 
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  Create Event
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/"
+                  className={`inline-flex items-center px-1 pt-1 text-lg font-medium ${
+                    location.pathname === "/" 
+                      ? 'text-blue-600 border-b-2 border-blue-600' 
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  Home
+                </Link>
+                <Link
+                  to="/public-event"
+                  className={`inline-flex items-center px-1 pt-1 text-lg font-medium ${
+                    location.pathname === "/public-event" 
+                      ? 'text-blue-600 border-b-2 border-blue-600' 
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  Events
+                </Link>
+              </>
+            )}
+          </nav>
+
+          <div className="flex items-center space-x-6">
+            {!user ? (
+              <Link to="/register">
+                <button className="px-6 py-3 bg-green-500 text-white text-lg rounded hover:bg-green-600">
+                  Register
+                </button>
+              </Link>
+            ) : null}
+
+            {!user ? (
+              <Link to="/login">
+                <button className="ml-4 px-6 py-3 bg-blue-500 text-white text-lg rounded hover:bg-blue-600">
+                  Login
+                </button>
+              </Link>
+            ) : (
+              <button
+                onClick={handleLogout}
+                className="ml-4 px-6 py-3 bg-blue-500 text-white text-lg rounded hover:bg-blue-600"
+              >
+                Logout
+              </button>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </header>
   );

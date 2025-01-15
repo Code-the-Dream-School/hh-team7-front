@@ -16,6 +16,8 @@ import axios from "axios";
 import defaultEventImage from './img/default-event.jpg';
 import { AuthContext } from "../../contexts/AuthContext"; 
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
+
 const EventDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -27,9 +29,10 @@ const EventDetailPage = () => {
     const fetchEvent = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/v1/public-events/${id}`
+          `${apiBaseUrl}/public-events/${id}`
         );
         setEvent(response.data);
+        console.log("response.data",response);
       } catch (error) {
         console.error("Error fetching event details:", error);
       }

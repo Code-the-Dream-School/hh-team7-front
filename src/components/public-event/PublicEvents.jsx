@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { EventCard, CardContent } from "./EventCard";
+import { EventCard, CardContent } from "@/components/public-event/EventCard";
 import { Calendar, MapPin, Users, Search } from "lucide-react";
 import { Link } from "react-router-dom";
-import { fetchEvents } from "../../contexts/PublicEventContext";
 import axios from "axios";
-import defaultEventImage from './img/default-event.jpg';
+import defaultEventImage from '@/components/public-event/img/default-event.jpg';
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 
 const PublicEvents = () => {
     const [events, setEvents] = useState([]);
@@ -32,7 +32,7 @@ const PublicEvents = () => {
           ? `&category=${selectedCategories.join(",")}`
           : "";
         const response = await axios.get(
-          `http://localhost:8000/api/v1/public-events?page=${currentPage}&limit=${ITEMS_PER_PAGE}&search=${searchQuery}${categoryQuery}`
+          `${apiBaseUrl}/public-events?page=${currentPage}&limit=${ITEMS_PER_PAGE}&search=${searchQuery}${categoryQuery}`
         );
         setEvents(response.data.events);
         setTotalPages(Math.ceil(response.data.total / ITEMS_PER_PAGE));
@@ -119,7 +119,7 @@ const PublicEvents = () => {
             </div>
           </div>
     
-          {/* Event Cards */}
+         {/* Event Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {events.length > 0 ? (
               events.map((event) => (

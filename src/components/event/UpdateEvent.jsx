@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
 import axios from "axios";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 
 const UpdateEvent = () => {
   const { token } = useContext(AuthContext);
@@ -37,7 +38,7 @@ const UpdateEvent = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/v1/events/${id}`, {
+        const response = await axios.get(`${apiBaseUrl}/events/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
