@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { UserAuthContext } from "../../contexts/UserAuthContext";
 import axios from "axios";
-import "../..App.css";
+import "../../App.css";
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 

@@ -37,7 +37,7 @@ const App = () => {
 
   // Conditionally render the sidebar based on the route
   const shouldShowSidebar =
-    location.pathname !== "/login" && location.pathname !== "/register" && location.pathname !== "/"; // Exclude Login and Register and Home
+    location.pathname !== "/login" && location.pathname !== "/register" && location.pathname !== "/" && location.pathname !== "/manage-events"; // Exclude Login and Register and Home
 
   return (
     <AuthProvider>
@@ -52,7 +52,7 @@ const App = () => {
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/public-event" element={<PublicEvent />} />
-                <Route path="/public-event/:id" element={<EventDetailPage />} />
+                <Route path="/events/:id" element={<EventDetailPage />} />
                 <Route path="/unauthorized" element={<Unauthorized />} />
                 {/* <Route path="/manage-users" element={<ManageUser />} />
                 <Route path="/manage-events" element={<ManageEvents />} /> */}
@@ -122,7 +122,7 @@ const App = () => {
                   path="/reset-password/update"
                   element={<ResetPasswordUpdate />}
                 />
-                <Route path="*" element={<Navigate to="/" replace />} />
+                {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
               </Routes>
             </div>
           </div>
