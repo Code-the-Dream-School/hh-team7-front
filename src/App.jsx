@@ -28,6 +28,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./components/Unauthorized";
 import PublicEvent from "./components/public-event/PublicEvents";
 import EventDetailPage from "./components/public-event/EventDetailPage";
+import ProfilePage from "./components/user/ProfilePage";
 
 const QueryRouter = () => {
   const location = useLocation();
@@ -58,6 +59,7 @@ const App = () => {
                 <Route path="/public-event" element={<PublicEvent />} />
                 <Route path="/public-event/:id" element={<EventDetailPage />} />
                 <Route path="/unauthorized" element={<Unauthorized />} />
+                <Route path="/profile" element={<ProfilePage />}/>
 
                 {/* Protected Routes */}
                 <Route
