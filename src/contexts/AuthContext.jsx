@@ -82,11 +82,12 @@ export const AuthProvider = ({ children }) => {
   const registerUser = async (userData) => {
     try {
       const response = await axios.post(`${API_URL}/register`, userData);
-      const { token: newToken, user: newUser } = response.data;
+      const { token: newToken } = response.data;
 
       setToken(newToken);
-      setUser(newUser);
       localStorage.setItem("token", newToken);
+      const decoded = decodeToken(newToken);
+      setUser(decoded);
 
       return response.data;
     } catch (error) {
@@ -100,14 +101,13 @@ export const AuthProvider = ({ children }) => {
     try {
       console.log("credentials",credentials);
       const response = await axios.post(`${API_URL}/login`, credentials);
-      setUser(response.data.user);
       setToken(response.data.token);
       localStorage.setItem("token", response.data.token);
-  
       // Decode the token manually
       const decoded = decodeToken(response.data.token);
       console.log("Decoded Token in Login:", decoded);
-  
+      setUser(decoded);
+
       return response.data;
     } catch (error) {
       console.error("Error during login:", error);
