@@ -69,7 +69,7 @@ const App = () => {
                 <Route 
                   path="/update-user/:id"
                   element={
-                    <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
+                    <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.ORGANIZER]}>
                       <UpdateUser />
                     </ProtectedRoute>
                   }

@@ -14,14 +14,15 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import defaultEventImage from './img/default-event.jpg';
-import { AuthContext } from "../../contexts/AuthContext"; 
+import { AuthContext } from "../../contexts/AuthContext";
 
 const EventDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { token, user } = useContext(AuthContext); 
+  const { token, user } = useContext(AuthContext);
   const [event, setEvent] = useState(null);
   const [registration, setRegistration] = useState(null);
+  const [isEventPassed, setIsEventPassed] = useState(false);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -29,7 +30,13 @@ const EventDetailPage = () => {
         const response = await axios.get(
           `http://localhost:8000/api/v1/public-events/${id}`
         );
-        setEvent(response.data);
+        const eventData = response.data;
+        setEvent(eventData);
+
+        // Check if the event date has passed
+        const eventDate = new Date(eventData.date);
+        const currentDate = new Date();
+        setIsEventPassed(eventDate < currentDate);
       } catch (error) {
         console.error("Error fetching event details:", error);
       }
@@ -96,18 +103,18 @@ const EventDetailPage = () => {
 
   const handleCancelRegistration = async () => {
     if (!registration) return;
-  
+
     try {
       const response = await axios.put(
         `http://localhost:8000/api/v1/registrations/${registration.id}`,
-        { status: "Canceled" }, // Use the correct ENUM value
+        { status: "Canceled" },
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-  
+
       if (response.status === 200) {
         setRegistration(response.data);
       }
@@ -115,10 +122,10 @@ const EventDetailPage = () => {
       console.error("Error canceling registration:", error);
     }
   };
-  
+
   const handleDeleteRegistration = async () => {
     if (!registration) return;
-  
+
     try {
       await axios.delete(
         `http://localhost:8000/api/v1/registrations/${registration.id}`,
@@ -128,12 +135,36 @@ const EventDetailPage = () => {
           },
         }
       );
-  
+
       setRegistration(null);
     } catch (error) {
       console.error("Error deleting registration:", error);
     }
   };
+
+  const handleCheckIn = async () => {
+    if (!registration) return;
+
+    try {
+      const response = await axios.put(
+        `http://localhost:8000/api/v1/registrations/${registration.id}/check-in`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setRegistration(response.data);
+      }
+    } catch (error) {
+      alert("Check-in time must be on or after the event date");
+      console.error("Error checking in:", error);
+    }
+  };
+
   if (!event) {
     return <div>Loading...</div>;
   }
@@ -193,19 +224,30 @@ const EventDetailPage = () => {
                       month: "long",
                       day: "numeric",
                       year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
+
                     })}
                   </span>
                   <span className="flex items-center gap-2">
                     <Clock className="h-4 w-4" />
-                    {event.time} - {event.endTime}
+                    {new Date(event.date).toLocaleTimeString("en-US", {
+                     
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </span>
                 </div>
               </div>
               <div className="flex flex-col items-end gap-2">
                 <span className="text-2xl font-bold">${event.price}</span>
-                {registration ? (
+                {!isEventPassed && !registration && (
+                  <button
+                    onClick={handleRegister}
+                    className="px-6 py-2 rounded-lg font-medium transition-colors bg-blue-600 hover:bg-blue-700"
+                  >
+                    Register Now
+                  </button>
+                )}
+                {registration && (
                   <>
                     <button
                       onClick={handleCancelRegistration}
@@ -219,14 +261,19 @@ const EventDetailPage = () => {
                     >
                       Delete Registration
                     </button>
+                    {registration.checkInTime ? (
+                      <div className="text-sm text-white-600">
+                        Checked in at: {new Date(registration.checkInTime).toLocaleString()}
+                      </div>
+                    ) : (
+                      <button
+                        onClick={handleCheckIn}
+                        className="px-6 py-2 rounded-lg font-medium transition-colors bg-green-600 hover:bg-green-700"
+                      >
+                        Check In
+                      </button>
+                    )}
                   </>
-                ) : (
-                  <button
-                    onClick={handleRegister}
-                    className="px-6 py-2 rounded-lg font-medium transition-colors bg-blue-600 hover:bg-blue-700"
-                  >
-                    Register Now
-                  </button>
                 )}
               </div>
             </div>

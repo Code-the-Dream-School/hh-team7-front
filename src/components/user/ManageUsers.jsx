@@ -58,12 +58,6 @@ const ManageUsers = () => {
       sortable: true,
     },
     {
-      name: "Created Date",
-      selector: (row) =>
-        format(new Date(row.created_date), "MM/dd/yyyy h:mm a"),
-      sortable: true,
-    },
-    {
       name: "Actions",
       cell: (row) => (
         <div className="flex space-x-2">

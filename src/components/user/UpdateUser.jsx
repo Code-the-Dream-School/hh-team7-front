@@ -51,7 +51,7 @@ const UpdateUser = () => {
     try {
 
       await axios.put(
-        `${apiBaseUrl}/users/${id}`,
+        `${apiBaseUrl}/users/user/${id}`,
         userData,
         {
           headers: {
@@ -61,7 +61,7 @@ const UpdateUser = () => {
       );
 
       alert("User updated successfully!");
-      navigate("/profile"); // Redirect to manage users page
+      navigate("/manage-users"); // Redirect to manage users page
     } catch (err) {
       console.error("Error updating user:", err);
       setError("Failed to update user.");
