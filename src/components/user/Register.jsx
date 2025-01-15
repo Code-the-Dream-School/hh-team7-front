@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { AuthContext } from "../../contexts/AuthContext"; 
+import { AuthContext } from "../../contexts/AuthContext";
 
 const Register = () => {
-  const { registerUser } = useContext(AuthContext); 
+  const { registerUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const {
     register,
@@ -29,9 +29,9 @@ const Register = () => {
   }, [formData]);
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex flex-col md:flex-row min-h-screen">
       {/* Left Side */}
-      <div className="w-1/2 bg-blue-600 flex items-center justify-center">
+      <div className="hidden md:flex w-full md:w-1/2 bg-blue-600 items-center justify-center">
         <div className="text-white text-center">
           <div className="rounded-full w-20 h-20 bg-blue-500 mb-6"></div>
           <h1 className="text-3xl font-bold">Join Us</h1>
@@ -40,7 +40,7 @@ const Register = () => {
       </div>
 
       {/* Right Side */}
-      <div className="w-1/2 flex items-center justify-center bg-sky-100">
+      <div className="flex w-full md:w-1/2 items-center justify-center bg-sky-100">
         <div className="bg-white rounded-lg shadow-lg p-8 w-96">
           <h2 className="text-2xl font-semibold text-gray-700 mb-6">
             Create an Account
@@ -51,8 +51,8 @@ const Register = () => {
 
           <form
             onSubmit={handleSubmit((data) => {
-              setFormData(data); 
-              onSubmit(data); 
+              setFormData(data);
+              onSubmit(data);
             })}
           >
             {/* Name */}
