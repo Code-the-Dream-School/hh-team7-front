@@ -15,12 +15,24 @@ const UpdateEvent = () => {
     eventType: "in-person",
     price: "",
     isPrivate: false,
-    registrationDeadline: ""
+    registrationDeadline: "",
+    category: "",
   });
+  const [file, setFile] = useState(null); 
+  const [previewUrl, setPreviewUrl] = useState(null); 
+  const [existingBannerUrl, setExistingBannerUrl] = useState(""); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const EVENT_CATEGORIES = [
+    { value: "Technology", label: "Technology" },
+    { value: "Design", label: "Design" },
+    { value: "Business", label: "Business" },
+    { value: "Art", label: "Art" },
+    { value: "Music", label: "Music" },
+  ];
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -32,11 +44,12 @@ const UpdateEvent = () => {
         });
         const fetchedEvent = response.data;
 
-    setEventData({
-      ...fetchedEvent,
-      date: new Date(fetchedEvent.date).toISOString().slice(0, 16), // Format for <input type="datetime-local">
-      registrationDeadline: new Date(fetchedEvent.registrationDeadline).toISOString().slice(0, 16),
-    });
+        setEventData({
+          ...fetchedEvent,
+          date: new Date(fetchedEvent.date).toISOString().slice(0, 16), 
+          registrationDeadline: new Date(fetchedEvent.registrationDeadline).toISOString().slice(0, 16),
+        });
+        setExistingBannerUrl(fetchedEvent.eventBannerUrl); 
       } catch (err) {
         console.error("Error fetching event data:", err);
         setError("Failed to fetch event data.");
@@ -54,21 +67,40 @@ const UpdateEvent = () => {
     }));
   };
 
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      if (selectedFile.size > 5 * 1024 * 1024) { // 5MB limit
+        alert("File size exceeds 5MB.");
+        return;
+      }
+      if (!selectedFile.type.startsWith("image/")) {
+        alert("Only image files are allowed.");
+        return;
+      }
+      setFile(selectedFile);
+      setPreviewUrl(URL.createObjectURL(selectedFile)); 
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      const payload = {
-        ...eventData,
-        capacity: parseInt(eventData.capacity, 10),
-        price: parseFloat(eventData.price),
-      };
+      const formData = new FormData();
+      for (const key in eventData) {
+        formData.append(key, eventData[key]);
+      }
+
+      if (file) {
+        formData.append("file", file); 
+      }
 
       await axios.put(
         `http://localhost:8000/api/v1/events/${id}`,
-        payload,
+        formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -136,7 +168,7 @@ const UpdateEvent = () => {
 
         <div>
           <label htmlFor="registrationDeadline" className="block text-sm font-medium text-gray-700">
-            Registration deadline
+            Registration Deadline
           </label>
           <input
             type="datetime-local"
@@ -227,6 +259,56 @@ const UpdateEvent = () => {
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             min="0"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+            Category
+          </label>
+          <select
+            id="category"
+            name="category"
+            value={eventData.category}
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            required
+          >
+            <option value="" disabled>
+              Select a category
+            </option>
+            {EVENT_CATEGORIES.map((category) => (
+              <option key={category.value} value={category.value}>
+                {category.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Event Banner Upload */}
+        <div>
+          <label htmlFor="file" className="block text-sm font-medium text-gray-700">
+            Event Banner
+          </label>
+          {existingBannerUrl && (
+            <div className="mb-4">
+              <p className="text-sm text-gray-500">Current Banner:</p>
+              <img src={existingBannerUrl} alt="Event Banner" className="w-64 h-auto rounded-md" />
+            </div>
+          )}
+          {previewUrl && (
+            <div className="mb-4">
+              <p className="text-sm text-gray-500">New Banner Preview:</p>
+              <img src={previewUrl} alt="New Event Banner" className="w-64 h-auto rounded-md" />
+            </div>
+          )}
+          <input
+            type="file"
+            id="file"
+            name="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
 

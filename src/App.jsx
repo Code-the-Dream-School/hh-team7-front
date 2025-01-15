@@ -1,16 +1,12 @@
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  useLocation,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, useLocation,} from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { EventProvider } from "./contexts/EventContext";
 import { UserAuthProvider } from "./contexts/UserAuthContext";
 import Header from "./components/Header";
 import Register from "./components/user/Register";
 import Login from "./components/user/Login";
+import { ROLES } from "./components/user/Role";
 import HomePage from "./components/HomePage";
 import ForgotPassword from "./components/user/ForgotPassword";
 import ResetPasswordVerify from "./components/user/ResetPasswordVerify";
@@ -40,7 +36,7 @@ const App = () => {
 
   // Conditionally render the sidebar based on the route
   const shouldShowSidebar =
-    location.pathname !== "/login" && location.pathname !== "/register"; // Exclude Login and Register
+    location.pathname !== "/login" && location.pathname !== "/register" && location.pathname !== "/"; // Exclude Login and Register and Home
 
   return (
     <AuthProvider>
@@ -51,26 +47,27 @@ const App = () => {
             {shouldShowSidebar && <DefaultSidebar />}
             <div className="flex-1 p-4">
               <Routes>
-                <Route path="/" element={<HomePage />} />
+                <Route path="/" element={<PublicEvent />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/public-event" element={<PublicEvent />} />
                 <Route path="/events/:id" element={<EventDetailPage />} />
                 <Route path="/unauthorized" element={<Unauthorized />} />
-
+                {/* <Route path="/manage-users" element={<ManageUser />} />
+                <Route path="/manage-events" element={<ManageEvents />} /> */}
                 {/* Protected Routes */}
                 <Route
                   path="/manage-users"
                   element={
-                    <ProtectedRoute allowedRoles={["admin", "organizer"]}>
+                    <ProtectedRoute allowedRoles={[ ROLES.ADMIN ]}>
                       <ManageUser />
                     </ProtectedRoute>
                   }
                 />
-                <Route
+                <Route 
                   path="/update-user/:id"
                   element={
-                    <ProtectedRoute allowedRoles={["admin", "organizer"]}>
+                    <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
                       <UpdateUser />
                     </ProtectedRoute>
                   }
@@ -79,15 +76,15 @@ const App = () => {
                 <Route
                   path="/manage-events"
                   element={
-                    <ProtectedRoute allowedRoles={["admin", "organizer"]}>
+                    <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.ORGANIZER]}>
                       <ManageEvents />
                     </ProtectedRoute>
                   }
-                />
+                  /> 
                 <Route
                   path="/create-event"
                   element={
-                    <ProtectedRoute allowedRoles={["admin", "organizer"]}>
+                    <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.ORGANIZER]}>
                       <CreateEvent />
                     </ProtectedRoute>
                   }
@@ -95,7 +92,7 @@ const App = () => {
                 <Route
                   path="/update-event/:id"
                   element={
-                    <ProtectedRoute allowedRoles={["admin", "organizer"]}>
+                    <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.ORGANIZER]}>
                       <UpdateEvent />
                     </ProtectedRoute>
                   }
@@ -104,8 +101,7 @@ const App = () => {
                   path="/registrations"
                   element={
                     <ProtectedRoute
-                      allowedRoles={["admin", "organizer", "attendee"]}
-                    >
+                      allowedRoles={[ROLES.ADMIN, ROLES.ORGANIZER, ROLES.ATTENDEE]}>
                       <CreateRegistration />
                     </ProtectedRoute>
                   }
@@ -113,7 +109,7 @@ const App = () => {
                 <Route
                   path="/manage-register"
                   element={
-                    <ProtectedRoute allowedRoles={["admin", "organizer"]}>
+                    <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.ORGANIZER, ROLES.ATTENDEE]}>
                       <ManageRegistration />
                     </ProtectedRoute>
                   }

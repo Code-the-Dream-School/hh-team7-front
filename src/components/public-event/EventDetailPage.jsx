@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Calendar,
   MapPin,
@@ -13,11 +13,15 @@ import {
   MessageCircle,
 } from "lucide-react";
 import axios from "axios";
+import defaultEventImage from './img/default-event.jpg';
+import { AuthContext } from "../../contexts/AuthContext"; 
 
 const EventDetailPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { token, user } = useContext(AuthContext); 
   const [event, setEvent] = useState(null);
-  const [isRegistered, setIsRegistered] = useState(false);
+  const [registration, setRegistration] = useState(null);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -31,9 +35,105 @@ const EventDetailPage = () => {
       }
     };
 
-    fetchEvent();
-  }, [id]);
+    const fetchRegistrations = async () => {
+      if (token) {
+        try {
+          const response = await axios.get(
+            `http://localhost:8000/api/v1/registrations`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          const registrations = response.data;
+          console.log("Fetched registrations:", registrations);
+          const userRegistration = registrations.find(
+            (reg) => reg.EventId === parseInt(id)
+          );
+          console.log("User registration for event:", userRegistration);
+          setRegistration(userRegistration || null);
+        } catch (error) {
+          console.error("Error fetching registrations:", error);
+        }
+      }
+    };
 
+    fetchEvent();
+    fetchRegistrations();
+  }, [id, token]);
+
+  const handleRegister = async () => {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const registrationData = {
+        EventId: id,
+        UserId: user.id,
+        status: "Confirmed",
+      };
+
+      const response = await axios.post(
+        `http://localhost:8000/api/v1/registrations`,
+        registrationData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        setRegistration(response.data);
+      }
+    } catch (error) {
+      console.error("Error registering for event:", error);
+    }
+  };
+
+  const handleCancelRegistration = async () => {
+    if (!registration) return;
+  
+    try {
+      const response = await axios.put(
+        `http://localhost:8000/api/v1/registrations/${registration.id}`,
+        { status: "Canceled" }, // Use the correct ENUM value
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        setRegistration(response.data);
+      }
+    } catch (error) {
+      console.error("Error canceling registration:", error);
+    }
+  };
+  
+  const handleDeleteRegistration = async () => {
+    if (!registration) return;
+  
+    try {
+      await axios.delete(
+        `http://localhost:8000/api/v1/registrations/${registration.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      setRegistration(null);
+    } catch (error) {
+      console.error("Error deleting registration:", error);
+    }
+  };
   if (!event) {
     return <div>Loading...</div>;
   }
@@ -72,7 +172,7 @@ const EventDetailPage = () => {
       {/* Hero Section */}
       <div className="relative h-96 bg-gray-900">
         <img
-          src={event.imageUrl}
+          src={event.eventBannerUrl || defaultEventImage}
           alt={event.title}
           className="w-full h-full object-cover opacity-80"
         />
@@ -93,6 +193,8 @@ const EventDetailPage = () => {
                       month: "long",
                       day: "numeric",
                       year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
                     })}
                   </span>
                   <span className="flex items-center gap-2">
@@ -103,23 +205,91 @@ const EventDetailPage = () => {
               </div>
               <div className="flex flex-col items-end gap-2">
                 <span className="text-2xl font-bold">${event.price}</span>
-                <button
-                  onClick={() => setIsRegistered(!isRegistered)}
-                  className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-                    isRegistered
-                      ? "bg-green-500 hover:bg-green-600"
-                      : "bg-blue-600 hover:bg-blue-700"
-                  }`}
-                >
-                  {isRegistered ? "Registered" : "Register Now"}
-                </button>
+                {registration ? (
+                  <>
+                    <button
+                      onClick={handleCancelRegistration}
+                      className="px-6 py-2 rounded-lg font-medium transition-colors bg-yellow-500 hover:bg-yellow-600"
+                    >
+                      Cancel Registration
+                    </button>
+                    <button
+                      onClick={handleDeleteRegistration}
+                      className="px-6 py-2 rounded-lg font-medium transition-colors bg-red-500 hover:bg-red-600"
+                    >
+                      Delete Registration
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={handleRegister}
+                    className="px-6 py-2 rounded-lg font-medium transition-colors bg-blue-600 hover:bg-blue-700"
+                  >
+                    Register Now
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* The rest of your EventDetailPage */}
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content */}
+          <div className="col-span-2 space-y-8">
+            {/* About Section */}
+            <section className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-xl font-semibold mb-4">About This Event</h2>
+              <p className="text-gray-600 whitespace-pre-line">{event.description}</p>
+            </section>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Event Details Card */}
+            <div className="bg-white rounded-lg shadow-sm p-6 space-y-4">
+              <div className="space-y-4">
+                <h3 className="font-medium text-lg mb-2">{event.name}</h3>
+                <div className="flex items-center gap-3">
+                  <MapPin className="h-5 w-5 text-gray-400" />
+                  <div>
+                    <h3 className="font-medium">Location</h3>
+                    <p className="text-sm text-gray-600">{event.location}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Users className="h-5 w-5 text-gray-400" />
+                  <div>
+                    <h3 className="font-medium">Participants</h3>
+                    <p className="text-sm text-gray-600">{event.capacity}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <DollarSign className="h-5 w-5 text-gray-400" />
+                  <div>
+                    <h3 className="font-medium">Price</h3>
+                    <p className="text-sm text-gray-600">${event.price} per person</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-3">
+              <button className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+                <ExternalLink className="h-4 w-4" />
+                Visit Event Website
+              </button>
+              <button className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+                <MessageCircle className="h-4 w-4" />
+                Contact Organizer
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
