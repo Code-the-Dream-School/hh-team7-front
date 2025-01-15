@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { AuthContext } from "../../contexts/AuthContext"; 
+import { AuthContext } from "../../contexts/AuthContext";
 
 const Login = () => {
-  const { login } = useContext(AuthContext); 
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
   const {
     register,
@@ -14,18 +14,18 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     try {
-      await login(data); 
+      await login(data);
       //alert("Login successful!");
-      navigate("/"); 
+      navigate("/");
     } catch (error) {
       alert(error.message || "An error occurred during login.");
     }
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex flex-col md:flex-row min-h-screen">
       {/* Left Side */}
-      <div className="w-1/2 bg-blue-500 flex items-center justify-center">
+      <div className="hidden md:flex w-full md:w-1/2 bg-blue-600 items-center justify-center">
         <div className="text-white text-center">
           <div className="rounded-full w-20 h-20 bg-blue-400 mb-6"></div>
           <h1 className="text-3xl font-bold">Welcome</h1>
@@ -34,7 +34,7 @@ const Login = () => {
       </div>
 
       {/* Right Side */}
-      <div className="w-1/2 flex items-center justify-center bg-sky-100">
+      <div className="flex w-full md:w-1/2 items-center justify-center bg-sky-100">
         <div className="bg-white rounded-lg shadow-lg p-8 w-96">
           <h2 className="text-2xl font-semibold text-gray-700 mb-6">
             Welcome Back
@@ -83,7 +83,9 @@ const Login = () => {
                 className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"
               />
               {errors.password && (
-                <p className="text-red-500 text-sm">{errors.password.message}</p>
+                <p className="text-red-500 text-sm">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
