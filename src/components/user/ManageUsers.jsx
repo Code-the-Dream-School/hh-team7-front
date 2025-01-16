@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { Link } from "react-router-dom";
 import DataTable from "react-data-table-component";
+import { Pencil, Trash } from "lucide-react"; // Import icons from lucide-react
 import { format } from "date-fns";
 
 const ManageUsers = () => {
@@ -46,16 +47,22 @@ const ManageUsers = () => {
       name: "Name",
       selector: (row) => row.name,
       sortable: true,
+      grow: 2, // Increase column width
+      cell: (row) => <span className="truncate">{row.name}</span>, // Truncate text if too long
     },
     {
       name: "Email",
       selector: (row) => row.email,
       sortable: true,
+      hide: "md", // Hide on mobile view
+      grow: 3, // Increase column width
     },
     {
       name: "Role",
       selector: (row) => row.role,
       sortable: true,
+      hide: "md", // Hide on mobile view
+      grow: 1, // Increase column width
     },
     {
       name: "Actions",
@@ -63,18 +70,20 @@ const ManageUsers = () => {
         <div className="flex space-x-2">
           <Link
             to={`/update-user/${row.id}`}
-            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            Update
+            <Pencil className="h-5 w-5" />
           </Link>
           <button
             onClick={() => handleDelete(row.id)}
-            className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+            className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
           >
-            Delete
+            <Trash className="h-5 w-5" />
           </button>
         </div>
       ),
+      button: true,
+      allowOverflow: true,
     },
   ];
 
