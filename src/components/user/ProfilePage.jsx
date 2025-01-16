@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { Camera, Calendar, Users, Star, Edit, ChevronRight } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Camera, Calendar, Users, Star, Edit, ChevronRight, ChevronDown } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { AuthContext } from "../../contexts/AuthContext"; 
 import axios from "axios";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
@@ -39,13 +39,12 @@ const ProfilePage = () => {
         setUserData(response.data);
 
         setUserStats({
-          eventsAttended: 0,//response.data.eventsAttended || 0,
-          eventsCreated:  0,//response.data.eventsCreated || 0,
-          totalParticipants:  0,//response.data.totalParticipants || 0,
-          upcomingEvents:  0,//response.data.upcomingEvents || 0,
-        });
-
-        setCreatedEvents([]);//response.data.createdEvents || []);
+          eventsAttended: response.data.statistics.eventsAttended || 0,
+          eventsCreated:  response.data.statistics.eventsCreated || 0,
+          totalParticipants:  response.data.statistics.pastEvents || 0,
+          upcomingEvents:  response.data.statistics.upcomingEvents || 0,
+        });        
+        setCreatedEvents(response.data.createdEvents || []);
       } catch (err) {
         setError("Failed to fetch profile data.");
         console.error("Error fetching user data:", err);
@@ -84,7 +83,6 @@ const ProfilePage = () => {
           },
         }
       );
-      console.log("Response from server:", response.data);
       setUserData((prevData) => ({
         ...prevData,
         profilePictureUrl: response.data.profilePictureUrl,
@@ -94,6 +92,14 @@ const ProfilePage = () => {
       console.error("Error updating profile picture:", err);
       alert("Failed to update profile picture.");
     }
+  };
+
+  // State to track which event is expanded
+  const [expandedEventId, setExpandedEventId] = useState(null);
+
+  // Toggle expansion
+  const toggleEvent = (eventId) => {
+    setExpandedEventId(expandedEventId === eventId ? null : eventId);
   };
 
   return (
@@ -219,15 +225,38 @@ const ProfilePage = () => {
               <div key={event.id} className="py-4 first:pt-0 last:pb-0">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="font-medium">{event.title}</h3>
+                    <h3 className="font-medium">{event.name}</h3>
                     <p className="text-sm text-gray-600">
-                      {new Date(event.date).toLocaleDateString()} • {event.participants} participants
+                      {new Date(event.date).toLocaleDateString()} • {event.participantsCount} participants
                     </p>
                   </div>
-                  <button className="p-2 hover:bg-gray-100 rounded-full">
-                    <ChevronRight className="h-5 w-5 text-gray-400" />
+                  <button 
+                    onClick={() => toggleEvent(event.id)}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  >
+                    {expandedEventId === event.id ? 
+                      <ChevronDown className="h-5 w-5 text-gray-400" /> : 
+                      <ChevronRight className="h-5 w-5 text-gray-400" />
+                    }
                   </button>
                 </div>
+                {/* Participants list - shown when expanded */}
+                {expandedEventId === event.id && (
+                  <div className="pl-4 mt-2 space-y-2">
+                    <h4 className="text-sm font-bold text-gray-700">Participants:</h4>
+                    <div className="space-y-2">
+                      {event.participants.map((participant, index) => (
+                        <div 
+                          key={index} 
+                          className="flex items-center justify-between bg-gray-50 p-3 rounded-lg"
+                        >
+                          <span className="text-sm font-medium">{participant.name}</span>
+                          <span className="text-sm text-gray-600">{participant.email}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
