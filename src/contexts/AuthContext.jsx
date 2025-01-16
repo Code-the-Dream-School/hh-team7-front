@@ -21,7 +21,6 @@ export const AuthProvider = ({ children }) => {
           .join("")
       );
       const decoded = JSON.parse(jsonPayload); 
-      console.log("Decoded Token:", decoded);
       return decoded;
     } catch (error) {
       console.error("Error decoding token:", error);
