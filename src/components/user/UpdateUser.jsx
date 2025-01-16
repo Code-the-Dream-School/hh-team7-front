@@ -49,9 +49,13 @@ const UpdateUser = () => {
     e.preventDefault();
     setLoading(true);
     try {
+      const apiEndpoint =
+      user.role === "admin"
+        ? `${apiBaseUrl}/users/user/${id}`
+        : `${apiBaseUrl}/users/${id}`;
 
       await axios.put(
-        `${apiBaseUrl}/users/user/${id}`,
+        apiEndpoint,
         userData,
         {
           headers: {
@@ -61,7 +65,11 @@ const UpdateUser = () => {
       );
 
       alert("User updated successfully!");
-      navigate("/manage-users"); // Redirect to manage users page
+      if (user.role === "organizer") {
+        navigate("/profile"); 
+      } else {
+        navigate("/manage-users"); // Redirect to manage users page
+      }
     } catch (err) {
       console.error("Error updating user:", err);
       setError("Failed to update user.");
