@@ -3,6 +3,7 @@ import axios from "axios";
 import CreateRegistration from "./CreateRegistration";
 import styled from "styled-components";
 import "../../App.css";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 
 const Container = styled.div`
   padding: 1rem;
@@ -47,7 +48,7 @@ const ManageRegistration = () => {
         setLoading(true);
 
         const response = await axios.get(
-          "http://localhost:8000/api/v1/registrations",
+          apiBaseUrl + "/registrations",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -94,7 +95,7 @@ const ManageRegistration = () => {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:8000/api/v1/registrations/${id}`, {
+      await axios.delete(apiBaseUrl + `/registrations/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

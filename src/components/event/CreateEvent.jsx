@@ -74,7 +74,7 @@ const CreateEvent = () => {
         formData.append("file", file); 
       }
   
-      const response = await axios.post("http://localhost:8000/api/v1/events", formData, {
+      const response = await axios.post(apiBaseUrl + "/events", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

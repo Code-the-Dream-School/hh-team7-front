@@ -23,12 +23,13 @@ const EventDetailPage = () => {
   const [event, setEvent] = useState(null);
   const [registration, setRegistration] = useState(null);
   const [isEventPassed, setIsEventPassed] = useState(false);
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 
   useEffect(() => {
     const fetchEvent = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/v1/public-events/${id}`
+          apiBaseUrl + `/public-events/${id}`
         );
         const eventData = response.data;
         setEvent(eventData);
@@ -46,7 +47,7 @@ const EventDetailPage = () => {
       if (token) {
         try {
           const response = await axios.get(
-            `http://localhost:8000/api/v1/registrations`,
+            apiBaseUrl + `/registrations`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -84,7 +85,7 @@ const EventDetailPage = () => {
       };
 
       const response = await axios.post(
-        `http://localhost:8000/api/v1/registrations`,
+        apiBaseUrl + `/registrations`,
         registrationData,
         {
           headers: {
@@ -106,7 +107,7 @@ const EventDetailPage = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:8000/api/v1/registrations/${registration.id}`,
+        apiBaseUrl + `/registrations/${registration.id}`,
         { status: "Canceled" },
         {
           headers: {
@@ -128,7 +129,7 @@ const EventDetailPage = () => {
 
     try {
       await axios.delete(
-        `http://localhost:8000/api/v1/registrations/${registration.id}`,
+        apiBaseUrl + `/registrations/${registration.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -147,7 +148,7 @@ const EventDetailPage = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:8000/api/v1/registrations/${registration.id}/check-in`,
+        apiBaseUrl + `/registrations/${registration.id}/check-in`,
         {},
         {
           headers: {
