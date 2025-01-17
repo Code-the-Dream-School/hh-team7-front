@@ -19,6 +19,7 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [image, setImage] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
   const { id } = useParams(); 
   const navigate = useNavigate();
 
@@ -56,6 +57,12 @@ const ProfilePage = () => {
     fetchUserData();
   }, [user, token]);
 
+  useEffect(() => {
+    if (image) {
+      handleProfilePictureUpdate();
+    }
+  }, [image]);
+
   // Handle file selection for the new profile picture
   const handleImageChange = (e) => {
     console.log("File selected:", e.target.files[0]);
@@ -64,11 +71,11 @@ const ProfilePage = () => {
 
   // Handle profile picture update
   const handleProfilePictureUpdate = async () => {
-    if (!image) {
+    if (!image || isUploading) {
       alert("Please select an image first.");
       return;
     }
-
+    setIsUploading(true);
     const formData = new FormData();
     formData.append("file", image);
     console.log("Sending image to the server...", formData);
@@ -87,10 +94,13 @@ const ProfilePage = () => {
         ...prevData,
         profilePictureUrl: response.data.profilePictureUrl,
       }));
+      setImage(null);
       alert("Profile picture updated successfully!");
     } catch (err) {
       console.error("Error updating profile picture:", err);
       alert("Failed to update profile picture.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -110,6 +120,11 @@ const ProfilePage = () => {
         <div className="flex items-start gap-6">
           <div className="relative">
             <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center">
+              {isUploading ? (
+                <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
+                  <div className="text-white">Uploading...</div>
+                </div>
+              ) : null}
               <img
                 src={userData ? userData.profilePictureUrl : './user.jpg'} 
                 alt="Profile"
@@ -123,6 +138,7 @@ const ProfilePage = () => {
                 console.log("Opening file input...");
                 document.getElementById("profile-image-input").click();
               }}
+              disabled={isUploading}
             >
               <Camera className="h-5 w-5" />
             </button>
@@ -131,11 +147,8 @@ const ProfilePage = () => {
               id="profile-image-input"
               type="file"
               className="hidden"
-              onChange={(e) => {
-                console.log("File selected:", e.target.files[0]); // Проверяем, что файл выбран
-                handleImageChange(e);
-                handleProfilePictureUpdate();
-              }}
+              onChange={handleImageChange}
+              disabled={isUploading}
             />
           </div>
           
