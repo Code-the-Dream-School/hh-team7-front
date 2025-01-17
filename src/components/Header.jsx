@@ -1,12 +1,14 @@
 import React, { useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
-import { Link } from "react-router-dom"; 
+import { Link, useNavigate } from "react-router-dom"; 
 
 const Header = () => {
   const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate(); 
 
   const handleLogout = async () => {
     await logout();
+    navigate('/');
   };
 
   return (
