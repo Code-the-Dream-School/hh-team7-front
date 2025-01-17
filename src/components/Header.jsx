@@ -9,6 +9,7 @@ const Header = () => {
 
   const handleLogout = async () => {
     await logout();
+    navigate('/');
   };
 
   const toggleMenu = () => {
