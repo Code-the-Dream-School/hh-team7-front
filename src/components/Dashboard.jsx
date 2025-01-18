@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { API_BASE_URL } from "@/config";
 import axios from "axios";
 
 
@@ -17,7 +18,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/v1/statistics");
+        const response = await axios.get(`${API_BASE_URL}/statistics`);
         setStats(response.data);
       } catch (error) {
         console.error("Error fetching stats", error);
