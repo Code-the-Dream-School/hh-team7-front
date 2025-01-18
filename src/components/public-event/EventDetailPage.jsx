@@ -1,20 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  Calendar,
-  MapPin,
-  Users,
-  ArrowLeft,
-  Share2,
-  Bookmark,
-  Clock,
-  DollarSign,
-  ExternalLink,
-  MessageCircle,
-} from "lucide-react";
+import {Calendar, MapPin, Users, ArrowLeft, Share2, Bookmark, Clock, DollarSign, ExternalLink, MessageCircle,} from "lucide-react";
 import axios from "axios";
 import defaultEventImage from './img/default-event.jpg';
 import { AuthContext } from "../../contexts/AuthContext";
+import { API_BASE_URL } from "@/config";
 
 const EventDetailPage = () => {
   const { id } = useParams();
@@ -27,9 +17,7 @@ const EventDetailPage = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/api/v1/public-events/${id}`
-        );
+        const response = await axios.get(`${API_BASE_URL}/public-events/${id}`);
         const eventData = response.data;
         setEvent(eventData);
 
@@ -45,20 +33,15 @@ const EventDetailPage = () => {
     const fetchRegistrations = async () => {
       if (token) {
         try {
-          const response = await axios.get(
-            `http://localhost:8000/api/v1/registrations`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
+          const response = await axios.get(`${API_BASE_URL}/registrations`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
           const registrations = response.data;
-          console.log("Fetched registrations:", registrations);
           const userRegistration = registrations.find(
             (reg) => reg.EventId === parseInt(id)
           );
-          console.log("User registration for event:", userRegistration);
           setRegistration(userRegistration || null);
         } catch (error) {
           console.error("Error fetching registrations:", error);
@@ -83,15 +66,11 @@ const EventDetailPage = () => {
         status: "Confirmed",
       };
 
-      const response = await axios.post(
-        `http://localhost:8000/api/v1/registrations`,
-        registrationData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.post(`${API_BASE_URL}/registrations`, registrationData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status === 201) {
         setRegistration(response.data);
@@ -106,7 +85,7 @@ const EventDetailPage = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:8000/api/v1/registrations/${registration.id}`,
+        `${API_BASE_URL}/registrations/${registration.id}`,
         { status: "Canceled" },
         {
           headers: {
@@ -127,14 +106,11 @@ const EventDetailPage = () => {
     if (!registration) return;
 
     try {
-      await axios.delete(
-        `http://localhost:8000/api/v1/registrations/${registration.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.delete(`${API_BASE_URL}/registrations/${registration.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setRegistration(null);
     } catch (error) {
@@ -147,7 +123,7 @@ const EventDetailPage = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:8000/api/v1/registrations/${registration.id}/check-in`,
+        `${API_BASE_URL}/registrations/${registration.id}/check-in`,
         {},
         {
           headers: {
@@ -210,13 +186,13 @@ const EventDetailPage = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 text-white p-6">
           <div className="max-w-7xl mx-auto">
-            <div className="flex items-start justify-between">
+            <div className="flex flex-col md:flex-row items-start justify-between">
               <div>
                 <span className="inline-block px-3 py-1 bg-blue-600 rounded-full text-sm mb-4">
                   {event.category}
                 </span>
                 <h1 className="text-4xl font-bold mb-2">{event.title}</h1>
-                <div className="flex items-center gap-4 text-gray-300">
+                <div className="flex flex-col md:flex-row items-center gap-4 text-gray-300">
                   <span className="flex items-center gap-2">
                     <Calendar className="h-4 w-4" />
                     {new Date(event.date).toLocaleDateString("en-US", {
@@ -224,13 +200,11 @@ const EventDetailPage = () => {
                       month: "long",
                       day: "numeric",
                       year: "numeric",
-
                     })}
                   </span>
                   <span className="flex items-center gap-2">
                     <Clock className="h-4 w-4" />
                     {new Date(event.date).toLocaleTimeString("en-US", {
-                     
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
