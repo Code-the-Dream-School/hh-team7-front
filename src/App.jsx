@@ -1,4 +1,5 @@
 import React from "react";
+import './index.css';
 import { BrowserRouter as Router, Route, Routes, useLocation,} from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { EventProvider } from "./contexts/EventContext";
@@ -24,6 +25,7 @@ import Unauthorized from "./components/Unauthorized";
 import PublicEvent from "./components/public-event/PublicEvents";
 import EventDetailPage from "./components/public-event/EventDetailPage";
 import ProfilePage from "./components/user/ProfilePage";
+import Dashboard from "./components/Dashboard";
 
 const QueryRouter = () => {
   const location = useLocation();
@@ -49,6 +51,7 @@ const App = () => {
             <div className="flex-1 p-4">
               <Routes>
                 <Route path="/" element={<PublicEvent />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/public-event" element={<PublicEvent />} />

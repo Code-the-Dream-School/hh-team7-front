@@ -1,12 +1,14 @@
 import React, { useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
-import { Link } from "react-router-dom"; 
+import { Link, useNavigate } from "react-router-dom"; 
 
 const Header = () => {
   const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate(); 
 
   const handleLogout = async () => {
     await logout();
+    navigate('/');
   };
 
   return (
@@ -29,6 +31,16 @@ const Header = () => {
                   }`}
                 >
                   Home
+                </Link>
+                <Link
+                  to="/dashboard"
+                  className={`inline-flex items-center px-1 pt-1 text-lg font-medium ${
+                    location.pathname === "/dashboard" 
+                      ? 'text-blue-600 border-b-2 border-blue-600' 
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  Dashboard
                 </Link>
                 <Link
                   to="/manage-events"
