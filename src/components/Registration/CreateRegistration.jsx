@@ -2,10 +2,11 @@ import React, { useContext, useState } from "react";
 import { UserAuthContext } from "../../contexts/UserAuthContext";
 import axios from "axios";
 import "../../App.css";
+import QRcodeGenerator from "./QRcodeGenerator";
+import { useNavigate } from "react-router-dom";
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
-
-
+const apiBaseUrl =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 
 const CreateRegistration = ({ onRegistrationCreated }) => {
   const { token } = useContext(UserAuthContext); // Access token and context function
@@ -15,6 +16,22 @@ const CreateRegistration = ({ onRegistrationCreated }) => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [username, setUsername] = useState("");
+  const [qrCodeValue, setQrCodeValue] = useState("");
+  const navigate = useNavigate();
+
+  const sendEmailConfirmation = async (registration) => {
+    try {
+      await axios.post(`${apiBaseUrl}/send-email`, {
+        email: registration.email,
+        subject: "Event Registration Confirmation",
+        body: "Thank you for registering! Your unique QR code is attached.",
+        qrCode: qrCodeValue,
+      });
+      console.log("Email sent successfully.");
+    } catch (err) {
+      console.error("Error sending email:", err);
+    }
+  };
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -26,7 +43,7 @@ const CreateRegistration = ({ onRegistrationCreated }) => {
 
     try {
       const registrationData = {
-        EventId: parseInt(eventId, 10),
+        eventId: parseInt(eventId, 10),
         status: status.charAt(0).toUpperCase() + status.slice(1).toLowerCase(), // Ensure status matches ENUM format
       };
       console.log("registrationData", registrationData);
@@ -43,16 +60,26 @@ const CreateRegistration = ({ onRegistrationCreated }) => {
         }
       );
 
-      // Handle success
       console.log("Response:", response.data);
+      //set the qr code
+      setQrCodeValue(
+        JSON.stringify({
+          id: response.data.id,
+          eventId: response.data.eventId,
+          status: response.data.status,
+          username: username,
+          createdAt: response.data.createdAt,
+        })
+      );
       onRegistrationCreated(response.data);
+
       setSuccess("Registration created successfully!");
+      sendEmailConfirmation(response.data);
+      navigate(`/profile/${response.data.userId}`);
 
       setEventId("");
       setUsername("");
-
     } catch (err) {
-      // Handle error
       //console.error("Error creating registration:", err);
       setError(
         err.response?.data?.message ||
@@ -74,7 +101,7 @@ const CreateRegistration = ({ onRegistrationCreated }) => {
       {loading && <p className="text-blue-500">Processing...</p>}
 
       {/* Registration Form */}
-       <form
+      <form
         onSubmit={handleSubmit}
         className="responsive-form bg-white shadow-md rounded px-4 py-6 md:px-8 md:py-10"
       >
@@ -142,6 +169,12 @@ const CreateRegistration = ({ onRegistrationCreated }) => {
           </button>
         </div>
       </form>
+      {qrCodeValue && (
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold mb-4">Your QR Code:</h2>
+          <QRcodeGenerator value={qrCodeValue} />
+        </div>
+      )}
     </div>
   );
 };

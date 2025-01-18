@@ -4,6 +4,10 @@ import CreateRegistration from "./CreateRegistration";
 import styled from "styled-components";
 import "../../App.css";
 
+const apiBaseUrl =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
+const token = localStorage.getItem("token");
+
 const Container = styled.div`
   padding: 1rem;
   @media (min-width: 1024px) {
@@ -45,15 +49,14 @@ const ManageRegistration = () => {
     const fetchRegistrations = async () => {
       try {
         setLoading(true);
+        console.log("Token in localStorage:", localStorage.getItem("token"));
 
-        const response = await axios.get(
-          "http://localhost:8000/api/v1/registrations",
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const response = await axios.get(`${apiBaseUrl}/registrations`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
 
         console.log("API Response:", response.data);
 
@@ -64,7 +67,8 @@ const ManageRegistration = () => {
           typeof response.data === "object" &&
           response.data !== null
         ) {
-          setRegistrations([response.data]);
+          setRegistrations(Array.isArray(response.data) ? response.data : []);
+          // setRegistrations([response.data]);
         } else {
           throw new Error(
             "Invalid response format: expected an array or object."
@@ -86,6 +90,46 @@ const ManageRegistration = () => {
     setIsFormVisible(false);
   };
 
+  //update
+  const handleUpdate = async (id) => {
+    const updatedStatus = window.prompt(
+      "Enter the new status for the registration (Confirmed/Canceled):"
+    );
+    const updatedEventId = window.prompt("Enter the new Event ID:");
+
+    if (!updatedStatus || !updatedEventId) return;
+
+    try {
+      const payload = {
+        eventId: parseInt(updatedEventId, 10),
+        status: updatedStatus.charAt(0).toUpperCase() + updatedStatus.slice(1),
+      };
+
+      const response = await axios.put(
+        `${apiBaseUrl}/registrations/${id}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      setRegistrations((prev) =>
+        prev.map((registration) =>
+          registration.id === id
+            ? { ...registration, ...response.data }
+            : registration
+        )
+      );
+      alert("Registration updated successfully!");
+    } catch (err) {
+      console.error("Failed to update registration:", err);
+      setError("Failed to update registration. Please try again.");
+    }
+  };
+
   // Handle delete action
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
@@ -94,9 +138,9 @@ const ManageRegistration = () => {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:8000/api/v1/registrations/${id}`, {
+      await axios.delete(`${apiBaseUrl}/registrations/${id}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -141,13 +185,11 @@ const ManageRegistration = () => {
               <thead className="bg-gray-200">
                 <tr>
                   <th className="border px-2 sm:px-4 py-2">User Name</th>
-                  <th className="border px-2 sm:px-4 py-2">User Email</th>
-                  <th className="border px-2 sm:px-4 py-2">Event Name</th>
-                  <th className="border px-2 sm:px-4 py-2">Event Date</th>
+                  <th className="border px-2 sm:px-4 py-2">User ID</th>
+
                   <th className="border px-2 sm:px-4 py-2">Status</th>
-                  <th className="border px-2 sm:px-4 py-2">Payment Status</th>
-                  <th className="border px-2 sm:px-4 py-2">Notes</th>
-                  <th className="border px-2 sm:px-4 py-2">Check-in Time</th>
+                  <th className="border px-2 sm:px-4 py-2">Created At</th>
+
                   <th className="border px-2 sm:px-4 py-2">Actions</th>
                 </tr>
               </thead>
@@ -156,40 +198,41 @@ const ManageRegistration = () => {
                   registrations.map((registration) => (
                     <tr key={registration.id} className="hover:bg-gray-100">
                       <td className="border px-2 sm:px-4 py-2">
-                        {registration.user_name}
+                        {registration.eventId || "N/A"}
                       </td>
                       <td className="border px-2 sm:px-4 py-2">
-                        {registration.user_email}
+                        {registration.UserId || "N/A"}
                       </td>
                       <td className="border px-2 sm:px-4 py-2">
-                        {registration.event_name}
+                        {registration.status || "N/A"}
                       </td>
                       <td className="border px-2 sm:px-4 py-2">
-                        {new Date(registration.event_date).toLocaleDateString()}
-                      </td>
-                      <td className="border px-2 sm:px-4 py-2">
-                        {registration.status}
-                      </td>
-                      <td className="border px-2 sm:px-4 py-2">
-                        {registration.payment_status || "N/A"}
-                      </td>
-                      <td className="border px-2 sm:px-4 py-2">
-                        {registration.notes || "N/A"}
-                      </td>
-                      <td className="border px-2 sm:px-4 py-2">
-                        {registration.check_in_time
-                          ? new Date(
-                              registration.check_in_time
-                            ).toLocaleString()
+                        {registration.createdAt
+                          ? new Date(registration.createdAt).toLocaleString()
                           : "N/A"}
                       </td>
-                      <td className="border px-2 sm:px-4 py-2 flex space-x-2">
-                        <Button
-                          onClick={() => handleDelete(registration.id)}
-                          className="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded"
-                        >
-                          Delete
-                        </Button>
+                      <td className="border px-2 sm:px-4 py-2">
+                        <div className="flex justify-center space-x-2">
+                          <button
+                            onClick={() =>
+                              handleUpdate(
+                                registration.id,
+                                registration.status,
+                                registration.event_id
+                              )
+                            }
+                            className="bg-green-500 text-white px-4 py-2 rounded mr-2"
+                          >
+                            Update
+                          </button>
+
+                          <Button
+                            onClick={() => handleDelete(registration.id)}
+                            className="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded"
+                          >
+                            Delete
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))
