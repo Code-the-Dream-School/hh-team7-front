@@ -1,4 +1,4 @@
-# Event management app Back-End Repo for Node/React Practicum
+# Event management app Front-End Repo for Node/React Practicum
 
 Welcome to the Event Management app frontend repository for the Node/React Practicum. Dive in to set up and operate the backend components crucial for Event management operations.
 
