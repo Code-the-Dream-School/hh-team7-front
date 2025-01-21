@@ -20,8 +20,11 @@ const UpdateUser = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-
-        const response = await axios.get(`${apiBaseUrl}/users/${id}`, {
+        const apiEndpoint =
+        user.role === "admin"
+        ? `${apiBaseUrl}/users/user/${id}`
+        : `${apiBaseUrl}/users/${id}`;
+        const response = await axios.get(apiEndpoint, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
