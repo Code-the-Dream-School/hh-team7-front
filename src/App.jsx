@@ -47,7 +47,7 @@ const App = () => {
         <EventProvider>
           <Header />
           <div className="flex">
-            {shouldShowSidebar && <DefaultSidebar />}
+            {/* {shouldShowSidebar && <DefaultSidebar />} */}
             <div className="flex-1 p-4">
               <Routes>
                 <Route path="/" element={<PublicEvent />} />
@@ -81,7 +81,7 @@ const App = () => {
                 <Route
                   path="/manage-events"
                   element={
-                    <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.ORGANIZER]}>
+                    <ProtectedRoute allowedRoles={[ROLES.ORGANIZER]}>
                       <ManageEvents />
                     </ProtectedRoute>
                   }
@@ -89,7 +89,7 @@ const App = () => {
                 <Route
                   path="/create-event"
                   element={
-                    <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.ORGANIZER]}>
+                    <ProtectedRoute allowedRoles={[ROLES.ORGANIZER]}>
                       <CreateEvent />
                     </ProtectedRoute>
                   }
@@ -97,7 +97,7 @@ const App = () => {
                 <Route
                   path="/update-event/:id"
                   element={
-                    <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.ORGANIZER]}>
+                    <ProtectedRoute allowedRoles={[ROLES.ORGANIZER]}>
                       <UpdateEvent />
                     </ProtectedRoute>
                   }
@@ -106,7 +106,7 @@ const App = () => {
                   path="/registrations"
                   element={
                     <ProtectedRoute
-                      allowedRoles={[ROLES.ADMIN, ROLES.ORGANIZER, ROLES.ATTENDEE]}>
+                      allowedRoles={[ROLES.ORGANIZER, ROLES.ATTENDEE]}>
                       <CreateRegistration />
                     </ProtectedRoute>
                   }
@@ -114,7 +114,7 @@ const App = () => {
                 <Route
                   path="/manage-register"
                   element={
-                    <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.ORGANIZER, ROLES.ATTENDEE]}>
+                    <ProtectedRoute allowedRoles={[ROLES.ORGANIZER, ROLES.ATTENDEE]}>
                       <ManageRegistration />
                     </ProtectedRoute>
                   }

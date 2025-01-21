@@ -6,14 +6,14 @@ import { format } from "date-fns";
 import { Pencil, Trash } from "lucide-react"; // Importing icons from lucide-react
 
 const ManageEvents = () => {
-  const { getAllEvents, deleteEvent } = useContext(EventContext);
+  const { getMyEvents, deleteEvent } = useContext(EventContext);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const fetchedEvents = await getAllEvents();
+        const fetchedEvents = await getMyEvents();
         setEvents(fetchedEvents || []);
         setLoading(false);
       } catch (error) {
@@ -23,7 +23,7 @@ const ManageEvents = () => {
     };
 
     fetchEvents();
-  }, [getAllEvents]);
+  }, [getMyEvents]);
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this event?")) {
@@ -40,12 +40,12 @@ const ManageEvents = () => {
 
   const columns = [
     { name: "Event Name", selector: (row) => row.name, sortable: true, wrap: true },
-    { name: "Event Description", selector: (row) => row.description, sortable: true, hide: "md" },
-    { name: "Location", selector: (row) => row.location, sortable: true, hide: "md" },
-    { name: "Capacity", selector: (row) => row.capacity, sortable: true, hide: "md" },
+    { name: "Event Description", selector: (row) => row.description, sortable: true, $hide: "md" },
+    { name: "Location", selector: (row) => row.location, sortable: true, $hide: "md" },
+    { name: "Capacity", selector: (row) => row.capacity, sortable: true, $hide: "md" },
     { name: "Event Date", selector: (row) => format(new Date(row.date), "MM/dd/yyyy h:mm a"), sortable: true, wrap: true },
-    { name: "Event Type", selector: (row) => row.eventType, sortable: true, hide: "md" },
-    { name: "Event Status", selector: (row) => row.status, sortable: true, hide: "md" },
+    { name: "Event Type", selector: (row) => row.eventType, sortable: true, $hide: "md" },
+    { name: "Event Status", selector: (row) => row.status, sortable: true, $hide: "md" },
     { name: "Actions", cell: (row) => (
       <div className="flex gap-2">
         <Link
@@ -61,7 +61,7 @@ const ManageEvents = () => {
           <Trash className="h-5 w-5" />
         </button>
       </div>
-    ), ignoreRowClick: true, allowOverflow: true, button: true },
+    ), ignoreRowClick: true},
   ];
 
   if (loading) return <div>Loading events...</div>;

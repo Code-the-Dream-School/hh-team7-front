@@ -11,9 +11,9 @@ export const EventProvider = ({ children }) => {
     const API_URL = `${apiBaseUrl}/events`;
   
     // Fetch all events
-    const getAllEvents = async () => {
+    const getMyEvents = async () => {
       try {
-        const response = await axios.get(API_URL, {
+        const response = await axios.get(API_URL + '/my-events', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -79,7 +79,7 @@ export const EventProvider = ({ children }) => {
         value={{
           user,
           token,
-          getAllEvents,
+          getMyEvents,
           createEvent,
           updateEvent,
           deleteEvent,

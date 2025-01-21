@@ -2,22 +2,20 @@ import React, { useState } from "react";
 import { QrReader } from "react-qr-reader";
 import axios from "axios";
 
-const apiBaseUrl =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
-
 const CheckIn = () => {
-  const [scanResult, setScanResult] = useState(null);
+  const [eventDetails, setEventDetails] = useState(null);
 
   const handleScan = async (result) => {
     if (result) {
       try {
-        const response = await axios.post(`${apiBaseUrl}/check-in`, {
-          qrCodeData: result,
-        });
+        const qrData = JSON.parse(decodeURIComponent(result.text));
+        const { eventId } = qrData;
+
+        const response = await axios.get(`${API_BASE_URL}/events/${eventId}`);
+        setEventDetails(response.data);
         alert("Check-in successful!");
-        console.log(response.data);
       } catch (err) {
-        console.error("Check-in error:", err);
+        console.error("Error checking in:", err);
       }
     }
   };
@@ -27,11 +25,18 @@ const CheckIn = () => {
       <h2>Event Check-In</h2>
       <QrReader
         onResult={(result, error) => {
-          if (result) handleScan(result.text);
+          if (result) handleScan(result);
           if (error) console.error(error);
         }}
       />
-      {scanResult && <p>Scanned Data: {scanResult}</p>}
+      {eventDetails && (
+        <div>
+          <h3>Event Details</h3>
+          <p>{eventDetails.name}</p>
+          <p>{eventDetails.location}</p>
+          <p>{new Date(eventDetails.date).toLocaleString()}</p>
+        </div>
+      )}
     </div>
   );
 };
