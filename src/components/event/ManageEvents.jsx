@@ -40,12 +40,11 @@ const ManageEvents = () => {
 
   const columns = [
     { name: "Event Name", selector: (row) => row.name, sortable: true, wrap: true },
-    { name: "Event Description", selector: (row) => row.description, sortable: true, hide: "md" },
-    { name: "Location", selector: (row) => row.location, sortable: true, hide: "md" },
-    { name: "Capacity", selector: (row) => row.capacity, sortable: true, hide: "md" },
+    { name: "Location", selector: (row) => row.location, sortable: true, wrap: true, hide: "sm" },
+    { name: "Capacity", selector: (row) => row.capacity, sortable: true, hide: "sm" },
     { name: "Event Date", selector: (row) => format(new Date(row.date), "MM/dd/yyyy h:mm a"), sortable: true, wrap: true },
-    { name: "Event Type", selector: (row) => row.eventType, sortable: true, hide: "md" },
-    { name: "Event Status", selector: (row) => row.status, sortable: true, hide: "md" },
+    { name: "Event Type", selector: (row) => row.eventType, sortable: true, hide: "sm" },
+    { name: "Event Status", selector: (row) => row.status, sortable: true, hide: "sm" },
     { name: "Actions", cell: (row) => (
       <div className="flex gap-2">
         <Link
