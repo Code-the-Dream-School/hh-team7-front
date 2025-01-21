@@ -47,22 +47,22 @@ const ManageUsers = () => {
       name: "Name",
       selector: (row) => row.name,
       sortable: true,
-      grow: 2, // Increase column width
+      $grow: 2, // Increase column width
       cell: (row) => <span className="truncate">{row.name}</span>, // Truncate text if too long
     },
     {
       name: "Email",
       selector: (row) => row.email,
       sortable: true,
-      hide: "md", // Hide on mobile view
-      grow: 3, // Increase column width
+      $hide: "md", // Hide on mobile view
+      $grow: 3, // Increase column width
     },
     {
       name: "Role",
       selector: (row) => row.role,
       sortable: true,
-      hide: "md", // Hide on mobile view
-      grow: 1, // Increase column width
+      $hide: "md", // Hide on mobile view
+      $grow: 1, // Increase column width
     },
     {
       name: "Actions",
@@ -82,8 +82,6 @@ const ManageUsers = () => {
           </button>
         </div>
       ),
-      button: true,
-      allowOverflow: true,
     },
   ];
 

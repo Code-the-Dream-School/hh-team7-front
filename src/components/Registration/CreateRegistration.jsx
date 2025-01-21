@@ -1,9 +1,11 @@
+
 import React, { useContext, useState } from "react";
 import { UserAuthContext } from "../../contexts/UserAuthContext";
 import axios from "axios";
 import "../../App.css";
 import QRcodeGenerator from "./QRcodeGenerator";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
 const apiBaseUrl =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
@@ -64,11 +66,10 @@ const CreateRegistration = ({ onRegistrationCreated }) => {
       //set the qr code
       setQrCodeValue(
         JSON.stringify({
+          registrationId: response.data.id,
           id: response.data.id,
           eventId: response.data.eventId,
           status: response.data.status,
-          username: username,
-          createdAt: response.data.createdAt,
         })
       );
       onRegistrationCreated(response.data);
@@ -172,11 +173,14 @@ const CreateRegistration = ({ onRegistrationCreated }) => {
       {qrCodeValue && (
         <div className="mt-8">
           <h2 className="text-xl font-semibold mb-4">Your QR Code:</h2>
-          <QRcodeGenerator value={qrCodeValue} />
+          <QRcodeGenerator eventId={eventId} />
         </div>
       )}
     </div>
   );
+  CreateRegistration.propTypes = {
+    onRegistrationCreated: PropTypes.func.isRequired,
+  };
 };
 
 export default CreateRegistration;
